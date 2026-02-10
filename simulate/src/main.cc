@@ -550,6 +550,16 @@ void PhysicsThread(mj::Simulate *sim, const char *filename)
       sim->Load(m, d, filename);
       mj_forward(m, d);
 
+      // setup view to track base_link
+      int track_body_id = mj_name2id(m, mjOBJ_BODY, "base_link");
+      if (track_body_id >= 0) {
+        sim->cam.type = mjCAMERA_TRACKING;
+        sim->cam.trackbodyid = track_body_id;
+        sim->cam.distance = 2.0;
+        sim->cam.elevation = -30.0;
+        sim->cam.azimuth = 30.0;
+      }
+
       // allocate ctrlnoise
       free(ctrlnoise);
       ctrlnoise = static_cast<mjtNum *>(malloc(sizeof(mjtNum) * m->nu));
@@ -618,6 +628,9 @@ __attribute__((used, visibility("default"))) extern "C" void _mj_rosettaError(co
 }
 #endif
 
+// pointer to original GLFW key callback
+GLFWkeyfun original_key_cb = nullptr;
+
 // user keyboard callback
 void user_key_cb(GLFWwindow* window, int key, int scancode, int act, int mods) {
   if (act==GLFW_PRESS)
@@ -631,10 +644,10 @@ void user_key_cb(GLFWwindow* window, int key, int scancode, int act, int mods) {
         elastic_band.length_ += 0.1;
       }
     }
-    if(key==GLFW_KEY_BACKSPACE) {
-      mj_resetData(m, d);
-      mj_forward(m, d);
-    }
+  }
+
+  if (original_key_cb) {
+    original_key_cb(window, key, scancode, act, mods);
   }
 }
 
@@ -688,7 +701,7 @@ int main(int argc, char **argv)
   // start physics thread
   std::thread physicsthreadhandle(&PhysicsThread, sim.get(), param::config.robot_scene.c_str());
   // start simulation UI loop (blocking call)
-  glfwSetKeyCallback(static_cast<mj::GlfwAdapter*>(sim->platform_ui.get())->window_,user_key_cb);
+  original_key_cb = glfwSetKeyCallback(static_cast<mj::GlfwAdapter*>(sim->platform_ui.get())->window_,user_key_cb);
   sim->RenderLoop();
   physicsthreadhandle.join();
 
