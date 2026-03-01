@@ -1,4 +1,7 @@
 # UPDATE
+## 20260301
+1. 新增了默认相机朝向base_link (go2)或torso_link (g1)
+2. 修改flat.yaml中天空为蓝色 (原来为黑色)
 ## 20260224
 1. g1添加flat, cross_slope, cross_stairs, race_track, stairs场景
 2. 在g1_29dof配置中加入对足部摩擦的设置，目前设置为0.8

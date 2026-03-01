@@ -550,14 +550,17 @@ void PhysicsThread(mj::Simulate *sim, const char *filename)
       sim->Load(m, d, filename);
       mj_forward(m, d);
 
-      // setup view to track base_link
+      // setup view to track base_link or torso
       int track_body_id = mj_name2id(m, mjOBJ_BODY, "base_link");
+      if (track_body_id < 0) {
+        track_body_id = mj_name2id(m, mjOBJ_BODY, "torso_link");
+      }
       if (track_body_id >= 0) {
         sim->cam.type = mjCAMERA_TRACKING;
         sim->cam.trackbodyid = track_body_id;
-        sim->cam.distance = 2.0;
-        sim->cam.elevation = -30.0;
-        sim->cam.azimuth = 30.0;
+        sim->cam.distance = 2.5;
+        sim->cam.elevation = -20.0;
+        sim->cam.azimuth = 45.0;
       }
 
       // allocate ctrlnoise
