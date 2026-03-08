@@ -1,4 +1,6 @@
 # UPDATE
+## 20260305
+1. 将g1的手部重新加上碰撞mesh
 ## 20260301
 1. 新增了默认相机朝向base_link (go2)或torso_link (g1)
 2. 修改flat.yaml中天空为蓝色 (原来为黑色)
