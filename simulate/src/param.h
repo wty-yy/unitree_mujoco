@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
+#include <stdexcept>
 
 namespace param
 {
@@ -26,6 +27,16 @@ inline struct SimulationConfig
     int enable_elastic_band;
     int band_attached_link = 0;
 
+    bool enable_camera = false;
+    std::filesystem::path camera_model = "d435i.xml";
+    std::string camera_name = "front_depth_camera";
+    std::string camera_topic = "rt/front_depth_observation";
+    int camera_width = 640;
+    int camera_height = 360;
+    double camera_publish_hz = 15.0;
+    bool show_depth = true;
+    double depth_display_max = 2.0;
+
     void load_from_yaml(const std::string &filename)
     {
         auto cfg = YAML::LoadFile(filename);
@@ -41,6 +52,25 @@ inline struct SimulationConfig
             joystick_bits = cfg["joystick_bits"].as<int>();
             print_scene_information = cfg["print_scene_information"].as<int>();
             enable_elastic_band = cfg["enable_elastic_band"].as<int>();
+
+            if (const auto camera = cfg["camera"])
+            {
+                if (camera["enabled"]) enable_camera = camera["enabled"].as<bool>();
+                if (camera["model"]) camera_model = camera["model"].as<std::string>();
+                if (camera["name"]) camera_name = camera["name"].as<std::string>();
+                if (camera["topic"]) camera_topic = camera["topic"].as<std::string>();
+                if (camera["width"]) camera_width = camera["width"].as<int>();
+                if (camera["height"]) camera_height = camera["height"].as<int>();
+                if (camera["publish_hz"]) camera_publish_hz = camera["publish_hz"].as<double>();
+                if (camera["show_depth"]) show_depth = camera["show_depth"].as<bool>();
+                if (camera["display_max_depth"]) depth_display_max = camera["display_max_depth"].as<double>();
+            }
+
+            if (camera_width <= 0 || camera_height <= 0 || camera_publish_hz <= 0.0 ||
+                depth_display_max <= 0.0)
+            {
+                throw std::runtime_error("camera width, height, publish_hz and display_max_depth must be positive");
+            }
         }
         catch(const std::exception& e)
         {

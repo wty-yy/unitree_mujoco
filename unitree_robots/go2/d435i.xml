@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<mujoco model="go2 d435i attachment">
+  <!--
+    Standalone D435i attachment. simulate attaches front_camera below base_link
+    at load time so the same camera can be used with every Go2 scene.
+  -->
+  <compiler angle="radian" meshdir="assets"/>
+  <asset>
+    <mesh name="d435i_camera_base_mesh" file="camera_base.stl"/>
+    <mesh name="d435i_camera_mount_mesh" file="camera_mount_thick.stl"/>
+    <mesh name="d435i_camera_mesh" file="camera_d435.stl"/>
+  </asset>
+  <worldbody>
+    <frame name="d435i_attachment">
+      <body name="front_camera" pos="0.32715 -0.00003 0.04297">
+        <body name="camera_base" pos="-0.0316 0 0.0339" quat="0.7071067811865476 0 0 0.7071067811865475">
+          <inertial pos="1.364400223e-18 -5.562413413e-04 2.356938510e-03" mass="0.0314" fullinertia="1.214172919e-06 8.009097700e-06 8.861365594e-06 -2.331631992e-23 1.700091419e-22 1.021177911e-07"/>
+          <geom name="camera_base_visual" type="mesh" pos="0 -1.20037e-05 0" mesh="d435i_camera_base_mesh" rgba="0.1 0.1 0.1 1" contype="0" conaffinity="0" group="2"/>
+          <geom name="camera_base_collision" type="box" pos="0 0 0.0065" size="0.025 0.01 0.0065" group="5"/>
+          <body name="camera_mount_thick" pos="0 -0.002512 0.0335">
+            <inertial pos="-5.134669429e-13 -1.162369557e-04 -1.584734567e-02" mass="0.0100" fullinertia="1.144543784e-06 4.391012828e-06 3.572996742e-06 1.462295345e-14 2.867429344e-16 1.042743628e-07"/>
+            <geom name="camera_mount_thick_visual" type="mesh" mesh="d435i_camera_mount_mesh" rgba="0.1 0.1 0.1 1" contype="0" conaffinity="0" group="2"/>
+            <geom name="camera_mount_thick_collision" type="box" pos="0 0 -0.013" size="0.0325 0.01 0.0195" group="5"/>
+          </body>
+          <body name="camera_d435" pos="0 -0.0309136 0.0179006" quat="0.4848103581772784 0.8746192980971886 0 0">
+            <inertial pos="2.466172292e-04 -6.261757478e-05 -1.305330896e-02" mass="0.0923" fullinertia="8.506823180e-06 6.013371832e-05 5.957544869e-05 -8.061363717e-10 -1.976959681e-07 -2.697969134e-09"/>
+            <geom name="camera_d435_visual" type="mesh" mesh="d435i_camera_mesh" rgba="0.917647 0.917647 0.917647 1" contype="0" conaffinity="0" group="2"/>
+            <geom name="camera_d435_collision" type="box" pos="0 0 -0.0125" size="0.045 0.0125 0.0125" group="5"/>
+            <!-- MuJoCo cameras look along local -Z. This matches the training model. -->
+            <camera name="front_depth_camera" pos="0 0 0" quat="-8.326672684688674e-17 1.110223024625157e-16 0.9999999999996442 8.43716540965822e-07" resolution="640 360" sensorsize="640 360" focalpixel="325.6343657510801 324.72859594885625" principalpixel="0 0"/>
+          </body>
+        </body>
+      </body>
+    </frame>
+  </worldbody>
+</mujoco>

@@ -17,6 +17,7 @@
 #include "glfw_adapter.h"
 #undef private
 
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
@@ -32,6 +33,7 @@
 #include <mujoco/mujoco.h>
 #include "simulate.h"
 #include "array_safety.h"
+#include "depth_camera_publisher.h"
 #include "unitree_sdk2_bridge.h"
 #include "param.h"
 
@@ -99,6 +101,7 @@ namespace
   // model and data
   mjModel *m = nullptr;
   mjData *d = nullptr;
+  GLFWwindow *depth_render_window = nullptr;
 
   // control noise variables
   mjtNum *ctrlnoise = nullptr;
@@ -291,6 +294,52 @@ namespace
         mju::strcpy_arr(loadError, "could not load binary model");
       }
     }
+    else if (param::config.enable_camera)
+    {
+      mjSpec *scene_spec = mj_parseXML(filename, nullptr, loadError, kErrorLength);
+      if (!scene_spec)
+      {
+        mju::strcpy_arr(sim.load_error, loadError);
+        std::printf("%s\n", loadError);
+        return nullptr;
+      }
+
+      char camera_error[kErrorLength] = "";
+      const std::string camera_model = param::config.camera_model.string();
+      mjSpec *camera_spec = mj_parseXML(camera_model.c_str(), nullptr, camera_error, kErrorLength);
+      if (!camera_spec)
+      {
+        std::snprintf(loadError, kErrorLength, "could not parse camera model '%s': %s",
+                      camera_model.c_str(), camera_error);
+        mj_deleteSpec(scene_spec);
+        mju::strcpy_arr(sim.load_error, loadError);
+        std::printf("%s\n", loadError);
+        return nullptr;
+      }
+
+      mjsBody *base_link = mjs_findBody(scene_spec, "base_link");
+      mjsFrame *camera_attachment = mjs_findFrame(camera_spec, "d435i_attachment");
+      if (!base_link || !camera_attachment ||
+          !mjs_attach(base_link->element, camera_attachment->element, "", ""))
+      {
+        std::snprintf(loadError, kErrorLength,
+                      "could not attach front_camera from '%s' to base_link: scene='%s', camera='%s'",
+                      camera_model.c_str(), mjs_getError(scene_spec), mjs_getError(camera_spec));
+        mj_deleteSpec(camera_spec);
+        mj_deleteSpec(scene_spec);
+        mju::strcpy_arr(sim.load_error, loadError);
+        std::printf("%s\n", loadError);
+        return nullptr;
+      }
+
+      mnew = mj_compile(scene_spec, nullptr);
+      if (!mnew)
+      {
+        std::snprintf(loadError, kErrorLength, "%s", mjs_getError(scene_spec));
+      }
+      mj_deleteSpec(camera_spec);
+      mj_deleteSpec(scene_spec);
+    }
     else
     {
       mnew = mj_loadXML(filename, nullptr, loadError, kErrorLength);
@@ -321,6 +370,27 @@ namespace
       sim.run = 0;
     }
 
+    if (param::config.enable_camera)
+    {
+      const int camera_id = mj_name2id(mnew, mjOBJ_CAMERA, param::config.camera_name.c_str());
+      const int base_link_id = mj_name2id(mnew, mjOBJ_BODY, "base_link");
+      if (camera_id < 0 || base_link_id < 0)
+      {
+        std::snprintf(sim.load_error, mj::Simulate::kMaxFilenameLength,
+                      "camera-enabled model must contain base_link and camera '%s'",
+                      param::config.camera_name.c_str());
+        std::printf("%s\n", sim.load_error);
+        mj_deleteModel(mnew);
+        return nullptr;
+      }
+
+      mnew->vis.global.offwidth = std::max(mnew->vis.global.offwidth,
+                                           param::config.camera_width);
+      mnew->vis.global.offheight = std::max(mnew->vis.global.offheight,
+                                            param::config.camera_height);
+
+    }
+
     return mnew;
   }
 
@@ -337,6 +407,16 @@ namespace
     // run until asked to exit
     while (!sim.exitrequest.load())
     {
+      if (param::config.enable_camera && sim.droploadrequest.exchange(false))
+      {
+        std::cerr << "Model drag-and-drop reload is disabled while the depth camera is enabled"
+                  << std::endl;
+      }
+      if (param::config.enable_camera && sim.uiloadrequest.exchange(0))
+      {
+        std::cerr << "Model reload is disabled while the depth camera is enabled" << std::endl;
+      }
+
       if (sim.droploadrequest.load())
       {
         sim.LoadMessage(sim.dropfilename);
@@ -586,6 +666,7 @@ void PhysicsThread(mj::Simulate *sim, const char *filename)
 
 void *UnitreeSdk2BridgeThread(void *arg)
 {
+  auto *sim = static_cast<mj::Simulate *>(arg);
   // Wait for mujoco data
   while (true)
   {
@@ -613,6 +694,20 @@ void *UnitreeSdk2BridgeThread(void *arg)
     interface = std::make_unique<Go2Bridge>(m, d);
   }
   interface->start();
+
+  std::unique_ptr<DepthCameraPublisher> depth_publisher;
+  if (param::config.enable_camera)
+  {
+    try
+    {
+      depth_publisher = std::make_unique<DepthCameraPublisher>(m, d, sim, depth_render_window);
+      depth_publisher->start();
+    }
+    catch (const std::exception &error)
+    {
+      std::cerr << "Could not start depth publisher: " << error.what() << std::endl;
+    }
+  }
   
   while (true)
   {
@@ -693,13 +788,27 @@ int main(int argc, char **argv)
   if(param::config.robot_scene.is_relative()) {
     param::config.robot_scene = proj_dir.parent_path() / "unitree_robots" / param::config.robot / param::config.robot_scene;
   }
-
+  if(param::config.camera_model.is_relative()) {
+    param::config.camera_model = param::config.robot_scene.parent_path() / param::config.camera_model;
+  }
   // simulate object encapsulates the UI
   auto sim = std::make_unique<mj::Simulate>(
     std::make_unique<mj::GlfwAdapter>(),
     &cam, &opt, &pert, /* is_passive = */ false);
 
-  std::thread unitree_thread(UnitreeSdk2BridgeThread, nullptr);
+  if (param::config.enable_camera)
+  {
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    depth_render_window = glfwCreateWindow(1, 1, "D435i offscreen renderer", nullptr, nullptr);
+    glfwDefaultWindowHints();
+    if (!depth_render_window)
+    {
+      std::cerr << "Could not create the D435i offscreen OpenGL context" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+  std::thread unitree_thread(UnitreeSdk2BridgeThread, sim.get());
 
   // start physics thread
   std::thread physicsthreadhandle(&PhysicsThread, sim.get(), param::config.robot_scene.c_str());

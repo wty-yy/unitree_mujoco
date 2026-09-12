@@ -1,7 +1,8 @@
-robot: "g1"  # Robot name, "go2", "b2", "b2w", "h1", "go2w", "g1"
+robot: "go2"  # Robot name, "go2", "b2", "b2w", "h1", "go2w", "g1"
 # robot_scene: "scene.xml" # Robot scene, /unitree_robots/[robot]/scene.xml 
-robot_scene: "flat.xml" # g1: flat, cross_slope, cross_stairs, race_track, stairs
-# robot_scene: "flat.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs
+# robot_scene: "flat.xml" # g1: flat, cross_slope, cross_stairs, race_track, stairs
+robot_scene: "four_platforms.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms
+# robot_scene: "stairs.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms
 
 domain_id: 0  # Domain id
 interface: "lo" # Interface 
@@ -13,4 +14,16 @@ joystick_bits: 16 # Some game controllers may only have 8-bit accuracy
 
 print_scene_information: 1 # Print link, joint and sensors information of robot
 
-enable_elastic_band: 1 # Virtual spring band, used for lifting h1
+enable_elastic_band: 0 # Virtual spring band, used for lifting h1
+
+# D435i raw metric depth stream. The DDS payload remains unfiltered 32FC1 data.
+camera:
+  enabled: true
+  model: "d435i.xml"
+  name: "front_depth_camera"
+  topic: "rt/front_depth_observation"
+  width: 640
+  height: 360
+  publish_hz: 15.0
+  show_depth: true
+  display_max_depth: 2.0 # White point of the grayscale OpenCV preview.
