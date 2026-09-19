@@ -1,8 +1,10 @@
 robot: "go2"  # Robot name, "go2", "b2", "b2w", "h1", "go2w", "g1"
 # robot_scene: "scene.xml" # Robot scene, /unitree_robots/[robot]/scene.xml 
 # robot_scene: "flat.xml" # g1: flat, cross_slope, cross_stairs, race_track, stairs
-robot_scene: "four_platforms.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms
-# robot_scene: "stairs.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms
+# robot_scene: "four_platforms.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms
+robot_scene: "stairs.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms
+
+# TIPS: Veiw the heights of the stairs in`stairs.xml` terrain in MuJoCo by pressing F7 four times.
 
 domain_id: 0  # Domain id
 interface: "lo" # Interface 
@@ -18,7 +20,7 @@ enable_elastic_band: 0 # Virtual spring band, used for lifting h1
 
 # D435i raw metric depth stream. The DDS payload remains unfiltered 32FC1 data.
 camera:
-  enabled: true
+  enabled: false
   model: "d435i.xml"
   name: "front_depth_camera"
   topic: "rt/front_depth_observation"
