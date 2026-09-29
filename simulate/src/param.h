@@ -24,6 +24,8 @@ inline struct SimulationConfig
 
     int print_scene_information;
 
+    int show_base_velocity = 0;
+
     int enable_elastic_band;
     int band_attached_link = 0;
 
@@ -52,6 +54,11 @@ inline struct SimulationConfig
             joystick_bits = cfg["joystick_bits"].as<int>();
             print_scene_information = cfg["print_scene_information"].as<int>();
             enable_elastic_band = cfg["enable_elastic_band"].as<int>();
+
+            if (const auto node = cfg["show_base_velocity"])
+            {
+                show_base_velocity = node.as<int>();
+            }
 
             if (const auto camera = cfg["camera"])
             {

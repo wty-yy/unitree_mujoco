@@ -108,6 +108,9 @@ namespace
 
   using Seconds = std::chrono::duration<double>;
 
+  // last time the base velocity overlay was refreshed
+  std::chrono::time_point<mj::Simulate::Clock> last_velocity_overlay_update;
+
   //---------------------------------------- plugin handling -----------------------------------------
 
   // return the path to the directory containing the current executable
@@ -394,6 +397,51 @@ namespace
     return mnew;
   }
 
+  // publish the base x/y/yaw velocity as viewer overlay text
+  void UpdateBaseVelocityOverlay(mj::Simulate &sim, const mjModel *m, const mjData *d)
+  {
+    // locate the floating base: the first free joint in the kinematic tree
+    int free_joint = -1;
+    for (int i = 0; i < m->njnt; ++i)
+    {
+      if (m->jnt_type[i] == mjJNT_FREE)
+      {
+        free_joint = i;
+        break;
+      }
+    }
+    if (free_joint < 0)
+    {
+      return;
+    }
+
+    const int qpos_adr = m->jnt_qposadr[free_joint];
+    const int qvel_adr = m->jnt_dofadr[free_joint];
+
+    // base yaw from the free joint quaternion (w, x, y, z)
+    const mjtNum qw = d->qpos[qpos_adr + 3];
+    const mjtNum qx = d->qpos[qpos_adr + 4];
+    const mjtNum qy = d->qpos[qpos_adr + 5];
+    const mjtNum qz = d->qpos[qpos_adr + 6];
+    const mjtNum yaw = mju_atan2(2.0 * (qw * qz + qx * qy), 1.0 - 2.0 * (qy * qy + qz * qz));
+
+    // free joint linear velocity is in the world frame, angular velocity in the body frame
+    const mjtNum vx_world = d->qvel[qvel_adr + 0];
+    const mjtNum vy_world = d->qvel[qvel_adr + 1];
+    const mjtNum vx = mju_cos(yaw) * vx_world + mju_sin(yaw) * vy_world;
+    const mjtNum vy = -mju_sin(yaw) * vx_world + mju_cos(yaw) * vy_world;
+    const mjtNum wz = d->qvel[qvel_adr + 5];
+
+    char text[256];
+    std::snprintf(text, sizeof(text),
+                  "Base velocity (body frame)\nvx: %+7.3f m/s\nvy: %+7.3f m/s\nyaw rate: %+7.3f rad/s",
+                  vx, vy, wz);
+
+    sim.user_texts_new_.clear();
+    sim.user_texts_new_.emplace_back(mjFONT_NORMAL, mjGRID_TOPLEFT, text, "");
+    sim.newtextrequest.store(1);
+  }
+
   // simulate in background thread (while rendering in main thread)
   void PhysicsLoop(mj::Simulate &sim)
   {
@@ -607,6 +655,17 @@ namespace
             // run mj_forward, to update rendering and joint sliders
             mj_forward(m, d);
             sim.speed_changed = true;
+          }
+
+          // refresh the base velocity overlay at a fixed rate
+          if (param::config.show_base_velocity == 1)
+          {
+            const auto now = mj::Simulate::Clock::now();
+            if (now - last_velocity_overlay_update >= Seconds(0.1))
+            {
+              UpdateBaseVelocityOverlay(sim, m, d);
+              last_velocity_overlay_update = now;
+            }
           }
         }
       } // release std::lock_guard<std::mutex>
