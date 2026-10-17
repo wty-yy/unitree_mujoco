@@ -1,0 +1,16 @@
+# Scene under unitree_robots/go2/; absolute scene paths are also supported.
+# Support scenes with *.xml:
+#   flat, stairs, cross_stairs, cross_slope,
+#   race_track, racing, four_platforms, rough_flat, wheel, obstacles.
+robot_scene: "stairs.xml"
+
+domain_id: 0
+interface: "lo"
+
+use_joystick: 1
+joystick_type: "xbox" # "xbox" or "switch"
+joystick_device: "/dev/input/js0"
+joystick_bits: 16
+
+print_scene_information: 1
+show_base_velocity: 1 # Base x/y and yaw velocity in the viewer.

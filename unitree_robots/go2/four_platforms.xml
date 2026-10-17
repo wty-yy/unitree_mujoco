@@ -1,0 +1,61 @@
+<mujoco model="go2 four surrounding platforms">
+  <include file="go2.xml"/>
+
+  <!--
+    The Go2 starts at the origin, facing +X. Four finite platforms surround
+    the central 1.6 m x 1.6 m starting area:
+
+      +X (front): 0.30 m       -X (rear):  0.40 m
+      +Y (left):  0.50 m       -Y (right): 0.60 m
+
+    Each platform is 1.5 m long along its crossing direction. The front
+    platform spans x=[0.8, 2.3]. A target at [3.0, 0.0]
+    therefore requires climbing onto and descending from the 0.30 m platform.
+  -->
+  <statistic center="0 0 0.35" extent="2.8"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.25 0.25 0.25" specular="0.1 0.1 0.1"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-135" elevation="-24"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0"
+             width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge"
+             rgb1="0.20 0.25 0.30" rgb2="0.10 0.13 0.16" markrgb="0.8 0.8 0.8"
+             width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true"
+              texrepeat="5 5" reflectance="0.0"/>
+    <material name="platform_30cm_material" rgba="0.20 0.65 0.30 1"/>
+    <material name="platform_40cm_material" rgba="0.20 0.45 0.80 1"/>
+    <material name="platform_50cm_material" rgba="0.90 0.60 0.15 1"/>
+    <material name="platform_60cm_material" rgba="0.75 0.25 0.25 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 4" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" size="0 0 0.05" material="groundplane"/>
+
+    <!-- Front / +X: top surface at 0.30 m. -->
+    <geom name="platform_front_30cm" type="box"
+          pos="1.55 0 0.15" size="0.75 0.75 0.15"
+          material="platform_30cm_material"/>
+
+    <!-- Rear / -X: top surface at 0.40 m. -->
+    <geom name="platform_rear_40cm" type="box"
+          pos="-1.55 0 0.20" size="0.75 0.75 0.20"
+          material="platform_40cm_material"/>
+
+    <!-- Left / +Y: top surface at 0.50 m. -->
+    <geom name="platform_left_50cm" type="box"
+          pos="0 1.55 0.25" size="0.75 0.75 0.25"
+          material="platform_50cm_material"/>
+
+    <!-- Right / -Y: top surface at 0.60 m. -->
+    <geom name="platform_right_60cm" type="box"
+          pos="0 -1.55 0.30" size="0.75 0.75 0.30"
+          material="platform_60cm_material"/>
+  </worldbody>
+</mujoco>

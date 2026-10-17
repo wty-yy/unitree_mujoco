@@ -1,0 +1,27 @@
+<mujoco model="go2 rough flat">
+  <include file="go2.xml"/>
+
+  <!-- Rough flat ground: 10 m x 10 m height field with slight random noise
+       (0 ~ 0.002 m, plastic running track style). Regenerate with
+       terrain_tool/gen_rough_flat.py; the third hfield size value below
+       (elevation_z) must equal the max of NOISE_RANGE in that script. -->
+  <statistic center="0 0 0.1" extent="3.0"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-130" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+    <hfield name="rough_flat" size="5.0 5.0 0.002 0.01" file="rough_flat_hfield.png"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="hfield" hfield="rough_flat" material="groundplane"/>
+  </worldbody>
+</mujoco>
