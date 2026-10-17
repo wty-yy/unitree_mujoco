@@ -1,10 +1,12 @@
 robot: "go2"  # Robot name, "go2", "b2", "b2w", "h1", "go2w", "g1"
 # robot_scene: "scene.xml" # Robot scene, /unitree_robots/[robot]/scene.xml 
-# robot_scene: "flat.xml" # g1: flat, cross_slope, cross_stairs, race_track, stairs
+robot_scene: "stairs.xml" # g1: flat, cross_slope, cross_stairs, race_track, stairs
+# robot_scene: "cross_slope.xml" # g1: flat, cross_slope, cross_stairs, race_track, stairs
 # robot_scene: "rough_flat.xml" # g1: flat, cross_slope, cross_stairs, race_track, stairs
 # robot_scene: "four_platforms.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms
 # robot_scene: "wheel.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms, wheel
-robot_scene: "racing.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms, wheel
+# robot_scene: "obstacles.xml" # go2: highest-difficulty random pillar field from go2_rl_lab
+# robot_scene: "race_track.xml" # go2: flat, cross_slope, cross_stairs, race_track, stairs, four_platforms, wheel
 
 # TIPS: Veiw the heights of the stairs in`stairs.xml` terrain in MuJoCo by pressing F7 four times.
 
