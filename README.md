@@ -1,6 +1,7 @@
 <div align="center">
   <h1>Unitree Go2 MuJoCo</h1>
   <p><strong>Go2 models, scenes, and a C++ MuJoCo simulator based on <a href="https://github.com/unitreerobotics/unitree_mujoco">unitreerobotics/unitree_mujoco</a>, with Unitree SDK2 communication</strong></p>
+  <p>Adapted for the custom <a href="https://github.com/wty-yy/unitree_cpp_deploy/tree/go2">wty-yy/unitree_cpp_deploy/go2</a> locomotion controller</p>
   <p><strong>🌎 English</strong>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="README_zh.md">🇨🇳 中文</a></p>
 </div>
 
@@ -81,6 +82,8 @@ Additional settings in [`simulate/config.yaml`](simulate/config.yaml):
 - `joystick_bits`: Gamepad axis precision in bits, default `16`
 - `print_scene_information`: Print links, joints, actuators, and sensors with `1` (default); disable with `0`
 - `show_base_velocity`: Display base x/y and yaw velocity with `1` (default); disable with `0`
+
+After starting the simulator, follow the instructions in [wty-yy/unitree_cpp_deploy's go2 branch](https://github.com/wty-yy/unitree_cpp_deploy/tree/go2) to launch the locomotion controller.
 
 ## Code Structure
 

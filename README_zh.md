@@ -1,6 +1,7 @@
 <div align="center">
   <h1>Unitree Go2 MuJoCo</h1>
   <p><strong>基于 <a href="https://github.com/unitreerobotics/unitree_mujoco">unitreerobotics/unitree_mujoco</a> 的 Go2 模型、场景与 C++ MuJoCo 仿真器，通过 Unitree SDK2 通信</strong></p>
+  <p>适配自定义 <a href="https://github.com/wty-yy/unitree_cpp_deploy/tree/go2">wty-yy/unitree_cpp_deploy/go2</a> 运控程序</p>
   <p><a href="README.md">🌎 English</a>&nbsp;&nbsp;·&nbsp;&nbsp;<strong>🇨🇳 中文</strong></p>
 </div>
 
@@ -81,6 +82,8 @@ cmake --build simulate/build -j$(nproc)
 - `joystick_bits`：手柄摇杆精度位数，默认 `16`
 - `print_scene_information`：`1` 输出连杆、关节、执行器和传感器信息（默认），`0` 关闭
 - `show_base_velocity`：`1` 显示机身 x/y 速度与偏航角速度（默认），`0` 关闭
+
+仿真启动后，按 [wty-yy/unitree_cpp_deploy 的 go2 分支](https://github.com/wty-yy/unitree_cpp_deploy/tree/go2) 中的说明启动运控程序。
 
 ## 代码框架
 
