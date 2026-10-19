@@ -1,0 +1,16 @@
+[
+  {
+    "model": "g1_29dof_mode_15_complete_collisions.xml",
+    "urdf": "urdf/g1_29dof_mode_15_complete_collisions.urdf",
+    "source_sha256": "170667af311269e51b69cc3f9a447a8d2dd288db7869759698128acda60ea7ee",
+    "visuals": 34,
+    "collisions": 34
+  },
+  {
+    "model": "g1_29dof_mode_15_complete_collisions_shoes.xml",
+    "urdf": "urdf/g1_29dof_mode_15_complete_collisions_shoes.urdf",
+    "source_sha256": "3086213c5ec1076509cfb4a2c99812d097126b3fb1060b3f7dd71a76f02d0014",
+    "visuals": 46,
+    "collisions": 40
+  }
+]

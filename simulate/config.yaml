@@ -1,0 +1,20 @@
+# Scene under unitree_robots/g1/; absolute scene paths are also supported.
+# Scenes: flat.xml, stairs.xml, cross_stairs.xml, cross_slope.xml,
+#         race_track.xml, scene_29dof.xml.
+robot_scene: "flat.xml"
+# G1 29-DOF Mode 15 model; CLI: --model / -m overrides this value.
+# default: use the scene's Mode 15 model without shoes.
+# complete: full visual mesh collisions; complete-shoes: full collisions with shoes.
+# A model XML filename under unitree_robots/g1/ or an absolute XML path also works.
+robot_model: "default"
+
+domain_id: 0
+interface: "lo"
+
+use_joystick: 1
+joystick_type: "xbox" # "xbox" or "switch"
+joystick_device: "/dev/input/js0"
+joystick_bits: 16
+
+print_scene_information: 1
+enable_elastic_band: 0 # G1 suspension; 9: toggle, 7/up: raise, 8/down: lower.
