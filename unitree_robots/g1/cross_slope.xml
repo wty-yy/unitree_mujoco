@@ -1,5 +1,5 @@
 <mujoco model="cross_slope_1_4_7_10">
-  <include file="g1_29dof_mode_15_complete_collisions.xml"/>
+  <include file="g1_29dof_mode_15_unitree_model_collision.xml"/>
   <!-- Terrain: Cross Slope Arch, Levels: 1,4,7,10. Cross Layout: Center Gap 2.0m. Slope angle: 8.36deg Slope angle: 23.22deg Slope angle: 29.68deg Slope angle: 16.07deg -->
   <statistic center="0 0 0.1" extent="0.8" />
   <visual>

@@ -20,9 +20,7 @@ inline std::filesystem::path resolve_model(std::filesystem::path model,
         return {};
     }
     if (model == "complete") {
-        model = "g1_29dof_mode_15_complete_collisions.xml";
-    } else if (model == "complete-shoes") {
-        model = "g1_29dof_mode_15_complete_collisions_shoes.xml";
+        model = "g1_29dof_mode_15_unitree_model_collision.xml";
     }
     if (model.is_relative()) {
         model = model_dir / model;
@@ -58,11 +56,11 @@ inline std::string selected_scene_xml(const std::filesystem::path& scene,
         throw std::runtime_error("Cannot read scene: " + scene.string());
     }
     std::string xml{std::istreambuf_iterator<char>(stream), {}};
-    const std::regex include(R"xml((<include\s+file\s*=\s*["'])(?:\./)?g1_29dof_mode_15_complete_collisions\.xml(["']\s*/>))xml");
+    const std::regex include(R"xml((<include\s+file\s*=\s*["'])(?:\./)?g1_29dof_mode_15_unitree_model_collision\.xml(["']\s*/>))xml");
     std::smatch match;
     if (!std::regex_search(xml, match, include)) {
         throw std::runtime_error(
-            "Model selection requires a scene including g1_29dof_mode_15_complete_collisions.xml: " + scene.string());
+            "Model selection requires a scene including g1_29dof_mode_15_unitree_model_collision.xml: " + scene.string());
     }
     const auto start = match.position() + match[1].length();
     const auto length = match.length() - match[1].length() - match[2].length();

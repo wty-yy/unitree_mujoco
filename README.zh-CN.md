@@ -6,12 +6,11 @@
 
 ## 模型与场景
 
-使用 G1 29DOF Mode 15 模型，默认加载不带鞋的完整碰撞模型和平地场景 `flat.xml`。
+使用 `urdf/g1_29dof_mode_15_unitree_model_collision.urdf` 定义的 G1 29DOF Mode 15 模型。默认场景为 `flat.xml`。
 
-- `g1_29dof_mode_15_complete_collisions.xml`：不带鞋，`default` 或 `complete`
-- `g1_29dof_mode_15_complete_collisions_shoes.xml`：带鞋，`complete-shoes`
+- `g1_29dof_mode_15_unitree_model_collision.xml`：`default` 或 `complete`
 
-34 个机身网格由两个模型共用，6 个鞋子网格位于 `unitree_robots/g1/meshes/shoes/`。
+模型包含 34 个显示几何体和 33 个碰撞体：15 个 mesh、10 个球体、6 个圆柱和 2 个盒体。碰撞体使用默认隐藏的显示组 3，物理碰撞仍然生效。
 
 | 场景 | 模型 | 地形 |
 | --- | --- | --- |
@@ -52,14 +51,14 @@ cmake --build simulate/build -j$(nproc)
 # 默认 G1 29DOF Mode 15 平地场景
 ./simulate/build/unitree_mujoco
 ./simulate/build/unitree_mujoco -s stairs.xml
-./simulate/build/unitree_mujoco -s stairs.xml -m complete-shoes -i 0 -n lo
+./simulate/build/unitree_mujoco -s stairs.xml -m complete -i 0 -n lo
 ./simulate/build/unitree_mujoco --help
 ```
 
 | 参数 | 配置项 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `-s`、`--scene` | `robot_scene` | `flat.xml` | 相对路径从 `unitree_robots/g1/` 解析，也支持绝对路径 |
-| `-m`、`--model` | `robot_model` | `default` | 模型：`default`、`complete`、`complete-shoes` 或模型 XML 路径 |
+| `-m`、`--model` | `robot_model` | `default` | 模型：`default`、`complete` 或模型 XML 路径 |
 | `-i`、`--domain_id` | `domain_id` | `0` | DDS 域 ID |
 | `-n`、`--network` | `interface` | `lo` | DDS 网络接口 |
 | `-h`、`--help` | — | — | 显示帮助并退出 |
@@ -108,9 +107,8 @@ unitree_mujoco_g1/
 │   ├── mujoco/                  # 本地 MuJoCo 发行包的软链接
 │   └── src/                     # 仿真、G1 DDS 桥接与手柄支持
 └── unitree_robots/g1/            # Mode 15 MJCF 模型与地形场景
-    ├── meshes/                  # 共用机身网格
-    │   └── shoes/               # 鞋子网格
-    └── urdf/                    # 源 URDF 与 SRDF
+    ├── meshes/                  # 外观与碰撞网格
+    └── urdf/                    # URDF 模型
 ```
 
 ## 许可证

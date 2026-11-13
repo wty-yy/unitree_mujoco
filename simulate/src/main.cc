@@ -324,11 +324,40 @@ namespace
     return mnew;
   }
 
+  // Publish floating-base velocities in the base frame, as in the Go2 viewer.
+  void UpdateBaseVelocityOverlay(mj::Simulate &sim, const mjModel *model, const mjData *data)
+  {
+    sim.user_texts_new_.clear();
+    for (int joint = 0; joint < model->njnt; ++joint)
+    {
+      if (model->jnt_type[joint] != mjJNT_FREE)
+      {
+        continue;
+      }
+
+      const int qpos_adr = model->jnt_qposadr[joint];
+      const int qvel_adr = model->jnt_dofadr[joint];
+      // Free-joint translation is world-aligned; angular velocity is already local.
+      mjtNum inverse_quat[4], velocity[3];
+      mju_negQuat(inverse_quat, data->qpos + qpos_adr + 3);
+      mju_rotVecQuat(velocity, data->qvel + qvel_adr, inverse_quat);
+
+      char text[256];
+      std::snprintf(text, sizeof(text),
+                    "Base velocity (body frame)\nvx: %+7.3f m/s\nvy: %+7.3f m/s\nwz: %+7.3f rad/s",
+                    velocity[0], velocity[1], data->qvel[qvel_adr + 5]);
+      sim.user_texts_new_.emplace_back(mjFONT_NORMAL, mjGRID_TOPLEFT, text, "");
+      break;
+    }
+    sim.newtextrequest.store(1);
+  }
+
   // simulate in background thread (while rendering in main thread)
   void PhysicsLoop(mj::Simulate &sim)
   {
     // cpu-sim syncronization point
     std::chrono::time_point<mj::Simulate::Clock> syncCPU;
+    std::chrono::time_point<mj::Simulate::Clock> last_velocity_overlay_update;
     mjtNum syncSim = 0;
 
     // run until asked to exit
@@ -531,6 +560,16 @@ namespace
             mj_forward(m, d);
             sim.speed_changed = true;
           }
+
+          if (param::config.show_base_velocity == 1)
+          {
+            const auto now = mj::Simulate::Clock::now();
+            if (now - last_velocity_overlay_update >= Seconds(0.1))
+            {
+              UpdateBaseVelocityOverlay(sim, m, d);
+              last_velocity_overlay_update = now;
+            }
+          }
         }
       } // release std::lock_guard<std::mutex>
     }
@@ -601,7 +640,8 @@ void *UnitreeSdk2BridgeThread(void *arg)
 
   param::config.band_attached_link = mj_name2id(m, mjOBJ_BODY, "torso_link");
 
-  G1Bridge bridge(m, d);
+  auto* sim = static_cast<mj::Simulate*>(arg);
+  G1Bridge bridge(m, d, sim->mtx, sim->user_scn_geoms_);
   bridge.start();
 
   while (true)
@@ -700,7 +740,7 @@ int main(int argc, char **argv)
     std::make_unique<mj::GlfwAdapter>(),
     &cam, &opt, &pert, /* is_passive = */ false);
 
-  std::thread unitree_thread(UnitreeSdk2BridgeThread, nullptr);
+  std::thread unitree_thread(UnitreeSdk2BridgeThread, sim.get());
 
   // start physics thread
   std::thread physicsthreadhandle(&PhysicsThread, sim.get(), param::config.robot_scene.c_str());

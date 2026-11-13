@@ -1,16 +1,11 @@
 [
   {
-    "model": "g1_29dof_mode_15_complete_collisions.xml",
-    "urdf": "urdf/g1_29dof_mode_15_complete_collisions.urdf",
-    "source_sha256": "170667af311269e51b69cc3f9a447a8d2dd288db7869759698128acda60ea7ee",
+    "model": "g1_29dof_mode_15_unitree_model_collision.xml",
+    "urdf": "urdf/g1_29dof_mode_15_unitree_model_collision.urdf",
+    "source_urdf": "/home/yy/Coding/robotics/g1_rl_lab/source/g1_rl_lab/g1_rl_lab/assets/urdf/g1_29dof_mode_15_unitree_model_collision.urdf",
+    "source_sha256": "3b3c30f1d319ff0583534d2ad7e3b0388f2f7b85b73ce58df6518402aba0b2c7",
+    "urdf_sha256": "093f75c6df07554fbcdae7960e1564874583e9fef383fac4f4efe6cbde962771",
     "visuals": 34,
-    "collisions": 34
-  },
-  {
-    "model": "g1_29dof_mode_15_complete_collisions_shoes.xml",
-    "urdf": "urdf/g1_29dof_mode_15_complete_collisions_shoes.urdf",
-    "source_sha256": "3086213c5ec1076509cfb4a2c99812d097126b3fb1060b3f7dd71a76f02d0014",
-    "visuals": 46,
-    "collisions": 40
+    "collisions": 33
   }
 ]

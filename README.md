@@ -6,12 +6,11 @@
 
 ## Models and scenes
 
-Uses the G1 29DOF Mode 15 model. The default is the full-collision model without shoes in `flat.xml`.
+Uses the G1 29DOF Mode 15 model from `urdf/g1_29dof_mode_15_unitree_model_collision.urdf`. The default scene is `flat.xml`.
 
-- `g1_29dof_mode_15_complete_collisions.xml`: without shoes, selected by `default` or `complete`
-- `g1_29dof_mode_15_complete_collisions_shoes.xml`: with shoes, selected by `complete-shoes`
+- `g1_29dof_mode_15_unitree_model_collision.xml`: selected by `default` or `complete`
 
-Both models share 34 body meshes. Six shoe meshes are under `unitree_robots/g1/meshes/shoes/`.
+The model has 34 visual geometries and 33 collision geometries: 15 meshes, ten spheres, six cylinders, and two boxes. Collision geometries use display group 3, hidden by default; physics collisions remain enabled.
 
 | Scene | Model | Terrain |
 | --- | --- | --- |
@@ -52,14 +51,14 @@ Gamepad input is enabled by default. Connect an Xbox or Switch gamepad before st
 # Default G1 29DOF Mode 15 flat scene
 ./simulate/build/unitree_mujoco
 ./simulate/build/unitree_mujoco -s stairs.xml
-./simulate/build/unitree_mujoco -s stairs.xml -m complete-shoes -i 0 -n lo
+./simulate/build/unitree_mujoco -s stairs.xml -m complete -i 0 -n lo
 ./simulate/build/unitree_mujoco --help
 ```
 
 | Option | Configuration key | Default | Description |
 | --- | --- | --- | --- |
 | `-s`, `--scene` | `robot_scene` | `flat.xml` | Relative to `unitree_robots/g1/`; absolute paths are also supported |
-| `-m`, `--model` | `robot_model` | `default` | Model: `default`, `complete`, `complete-shoes`, or a model XML path |
+| `-m`, `--model` | `robot_model` | `default` | Model: `default`, `complete`, or a model XML path |
 | `-i`, `--domain_id` | `domain_id` | `0` | DDS domain ID |
 | `-n`, `--network` | `interface` | `lo` | DDS network interface |
 | `-h`, `--help` | — | — | Print help and exit |
@@ -108,9 +107,8 @@ unitree_mujoco_g1/
 │   ├── mujoco/                  # Symlink to a local MuJoCo release
 │   └── src/                     # Simulation, G1 DDS bridge, and gamepad support
 └── unitree_robots/g1/            # Mode 15 MJCF models and terrain scenes
-    ├── meshes/                  # Shared body meshes
-    │   └── shoes/               # Shoe meshes
-    └── urdf/                    # Source URDF and SRDF files
+    ├── meshes/                  # Visual and collision meshes
+    └── urdf/                    # URDF model
 ```
 
 ## License

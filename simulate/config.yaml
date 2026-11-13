@@ -3,8 +3,7 @@
 #         race_track.xml, scene_29dof.xml.
 robot_scene: "flat.xml"
 # G1 29-DOF Mode 15 model; CLI: --model / -m overrides this value.
-# default: use the scene's Mode 15 model without shoes.
-# complete: full visual mesh collisions; complete-shoes: full collisions with shoes.
+# default and complete: Mode 15 model from g1_29dof_mode_15_unitree_model_collision.urdf.
 # A model XML filename under unitree_robots/g1/ or an absolute XML path also works.
 robot_model: "default"
 
@@ -17,4 +16,7 @@ joystick_device: "/dev/input/js0"
 joystick_bits: 16
 
 print_scene_information: 1
+show_base_velocity: 1 # Base-frame vx, vy (m/s) and wz (rad/s) in the viewer.
+show_policy_height_map: true # Draw valid sampled terrain points as green dots.
+height_map_offset_x: 0.5 # Forward grid offset in metres; CLI: --height-map-offset-x.
 enable_elastic_band: 0 # G1 suspension; 9: toggle, 7/up: raise, 8/down: lower.

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -16,6 +17,9 @@
 #include <unitree/idl/hg/IMUState_.hpp>
 
 #include "param.h"
+#include "height_map.h"
+#include <unitree/idl/go2/HeightMap_.hpp>
+#include <unitree/robot/channel/channel_publisher.hpp>
 #include "physics_joystick.h"
 
 class G1Bridge
@@ -29,7 +33,10 @@ class G1Bridge
     using IMUState = unitree::robot::RealTimePublisher<unitree_hg::msg::dds_::IMUState_>;
 
 public:
-    G1Bridge(mjModel *model, mjData *data) : model_(model), data_(data)
+    G1Bridge(mjModel *model, mjData *data, std::recursive_mutex& simulation_mutex,
+             std::vector<mjvGeom>& visualization_geoms)
+        : model_(model), data_(data), simulation_mutex_(simulation_mutex),
+          visualization_geoms_(visualization_geoms)
     {
         if (model_->nu != 29 || model_->nq != 36 || model_->nv != 35 ||
             model_->nsensordata < 3 * model_->nu ||
@@ -37,6 +44,11 @@ public:
             mj_name2id(model_, mjOBJ_BODY, "torso_link") < 0)
         {
             throw std::runtime_error("Expected a floating-base G1 29-DOF model with 29 motor/sensor slots");
+        }
+
+        waist_pitch_motor_ = mj_name2id(model_, mjOBJ_ACTUATOR, "waist_pitch");
+        if (param::config.waist_pitch_torque_scale != 1.0 && waist_pitch_motor_ < 0) {
+            throw std::runtime_error("Waist-pitch torque scaling requires a waist_pitch actuator");
         }
 
         if (param::config.print_scene_information == 1) {
@@ -57,6 +69,10 @@ public:
         frame_pos_ = sensorAddress("frame_pos");
         frame_vel_ = sensorAddress("frame_vel");
 
+        height_map_ = std::make_unique<HeightMap>("rt/g1/policy_height_map");
+        height_map_mask_ = std::make_unique<HeightMap>("rt/g1/policy_height_map_missing_mask");
+        height_map_->InitChannel();
+        height_map_mask_->InitChannel();
         lowcmd_ = std::make_shared<LowCmd>("rt/lowcmd");
         lowstate_ = std::make_unique<LowState>();
         lowstate_->joystick = joystick_;
@@ -79,6 +95,8 @@ public:
         if (joystick_) {
             joystick_->update();
         }
+        std::lock_guard<std::recursive_mutex> simulation_lock(simulation_mutex_);
+        publishHeightMap();
         const int num_motor = model_->nu;
         {
             std::lock_guard<std::mutex> lock(lowcmd_->mutex_);
@@ -87,6 +105,15 @@ public:
                 data_->ctrl[i] = cmd.tau() +
                     cmd.kp() * (cmd.q() - data_->sensordata[i]) +
                     cmd.kd() * (cmd.dq() - data_->sensordata[i + num_motor]);
+                if (i == waist_pitch_motor_ && param::config.waist_pitch_torque_scale != 1.0) {
+                    // Scale after motor command saturation, preserving q/kp/kd in DDS.
+                    if (model_->actuator_ctrllimited[i] &&
+                        !(model_->opt.disableflags & mjDSBL_CLAMPCTRL)) {
+                        data_->ctrl[i] = std::clamp(data_->ctrl[i],
+                            model_->actuator_ctrlrange[2 * i], model_->actuator_ctrlrange[2 * i + 1]);
+                    }
+                    data_->ctrl[i] *= param::config.waist_pitch_torque_scale;
+                }
             }
         }
 
@@ -133,6 +160,44 @@ public:
     }
 
 private:
+    int waist_pitch_motor_ = -1;
+    using HeightMap = unitree::robot::ChannelPublisher<unitree_go::msg::dds_::HeightMap_>;
+    std::recursive_mutex& simulation_mutex_;
+    std::vector<mjvGeom>& visualization_geoms_;
+    std::unique_ptr<HeightMap> height_map_, height_map_mask_;
+    double last_height_map_time_ = -1.0;
+    long last_height_map_frame_ = -1;
+
+    void publishHeightMap()
+    {
+        const long frame = static_cast<long>(std::floor(data_->time * 15.0 + 1e-8));
+        const bool reset = data_->time < last_height_map_time_;
+        last_height_map_time_ = data_->time;
+        if (!reset && frame == last_height_map_frame_) return;
+        unitree_go::msg::dds_::HeightMap_ msg;
+        msg.stamp() = std::chrono::duration<double>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+        msg.frame_id() = "base_yaw_relative";
+        msg.resolution() = 0.1f;
+        msg.width() = 17;
+        msg.height() = 11;
+        msg.origin() = {-0.8f + static_cast<float>(param::config.height_map_offset_x), -0.5f};
+        msg.data().assign(187, 0.0f);
+        auto mask = msg;
+        if (!param::config.show_policy_height_map) visualization_geoms_.clear();
+        const auto heights = sampleHeightMap(model_, data_,
+            param::config.show_policy_height_map ? &visualization_geoms_ : nullptr,
+            param::config.height_map_offset_x);
+        for (int y = 0; y < 11; ++y) for (int x = 0; x < 17; ++x) {
+            const float h = heights[x*11+y];
+            if (std::isfinite(h)) msg.data()[y*17+x] = h;
+            else mask.data()[y*17+x] = 1.0f;
+        }
+        height_map_->Write(msg);
+        height_map_mask_->Write(mask);
+        last_height_map_frame_ = frame;
+    }
+
     struct ImuAddresses
     {
         int quat;
