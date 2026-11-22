@@ -1,0 +1,736 @@
+<mujoco model="go2 stones terrain">
+  <include file="go2.xml"/>
+
+  <!-- Go2 starts facing +X. The circular grid is on its left, the square grid on its right.
+       Relative to entering each grid: approach 0.5, left 0.1, straight 0.8, right 1.0.
+       Parallel edges in the same half of the grid share a difficulty. -->
+  <statistic center="0 0 -0.2" extent="11"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-130" elevation="-40"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge"
+             rgb1="0.20 0.25 0.30" rgb2="0.10 0.13 0.16" markrgb="0.8 0.8 0.8"
+             width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0"/>
+    <material name="stairs_material" rgba="0.20 0.45 0.80 1"/>
+    <material name="stones_material" rgba="0.15 0.65 0.75 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="6 0 6" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" pos="0 0 -0.5" size="0 0 0.05" material="groundplane"/>
+    <body name="stones_terrain" pos="2.71 0 -0.5">
+      <geom name="stones_entry_landing" type="box" pos="-2.71 0 0.25" size="0.75 1 0.25" material="stones_material"/>
+      <geom name="stones_entry_step_1" type="box" pos="-4.51 0 0.05" size="0.15 0.75 0.05" material="stairs_material"/>
+      <geom name="stones_entry_step_2" type="box" pos="-4.21 0 0.1" size="0.15 0.75 0.1" material="stairs_material"/>
+      <geom name="stones_entry_step_3" type="box" pos="-3.91 0 0.15" size="0.15 0.75 0.15" material="stairs_material"/>
+      <geom name="stones_entry_step_4" type="box" pos="-3.61 0 0.2" size="0.15 0.75 0.2" material="stairs_material"/>
+    </body>
+
+    <body name="cross_circle" pos="0 5.1389526 0">
+      <geom name="cross_circle_platform_0" type="box" pos="-3.7389526 -3.7389526 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_circle_platform_1" type="box" pos="-3.7389526 0 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_circle_platform_2" type="box" pos="-3.7389526 3.7389526 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_circle_platform_3" type="box" pos="0 -3.7389526 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_circle_center" type="box" pos="0 0 -0.25" size="0.5 0.5 0.25" material="stones_material"/>
+      <geom name="cross_circle_platform_5" type="box" pos="0 3.7389526 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_circle_platform_6" type="box" pos="3.7389526 -3.7389526 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_circle_platform_7" type="box" pos="3.7389526 0 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_circle_platform_8" type="box" pos="3.7389526 3.7389526 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <!-- Platforms 0 and 1, difficulty 0.5. -->
+      <site name="L0.5  dia 24.1cm  gap 2.8-24.8cm" pos="-3.7389526 -1.8694763 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_0_1_stone_1" type="cylinder" pos="-3.60294979 -3.10268151 -0.2320701" size="0.1205237 0.2679299" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_2" type="cylinder" pos="-3.87495542 -3.07331281 -0.2320701" size="0.1205237 0.2679299" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_3" type="cylinder" pos="-3.60448155 -2.80633709 -0.22621888" size="0.1205237 0.27378112" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_4" type="cylinder" pos="-3.87342366 -2.80393084 -0.22621888" size="0.1205237 0.27378112" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_5" type="cylinder" pos="-3.60320611 -2.32228996 -0.26859432" size="0.1205237 0.23140568" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_6" type="cylinder" pos="-3.8746991 -2.42226103 -0.26859432" size="0.1205237 0.23140568" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_7" type="cylinder" pos="-3.60942119 -1.83724763 -0.22866175" size="0.1205237 0.27133825" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_8" type="cylinder" pos="-3.86848402 -1.93307844 -0.22866175" size="0.1205237 0.27133825" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_9" type="cylinder" pos="-3.6055516 -1.53178212 -0.25282929" size="0.1205237 0.24717071" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_10" type="cylinder" pos="-3.8723536 -1.5086949 -0.25282929" size="0.1205237 0.24717071" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_11" type="cylinder" pos="-3.61388413 -1.18597198 -0.27180914" size="0.1205237 0.22819086" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_12" type="cylinder" pos="-3.86402108 -1.12687397 -0.27180914" size="0.1205237 0.22819086" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_13" type="cylinder" pos="-3.60187628 -0.77004645 -0.23709561" size="0.1205237 0.26290439" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_stone_14" type="cylinder" pos="-3.87602893 -0.63914966 -0.23709561" size="0.1205237 0.26290439" material="stones_material"/>
+      <geom name="cross_circle_lane_0_1_ground_1" type="box" pos="-3.60294979 -3.12673095 -0.52562025" size="0.6 0.21222165 0.07437975" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_2" type="box" pos="-3.60448155 -2.75941141 -0.51977022" size="0.6 0.23509789 0.08022978" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_3" type="box" pos="-3.60320611 -2.32204116 -0.46834862" size="0.6 0.28227237 0.13165138" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_4" type="box" pos="-3.60942119 -1.88214184 -0.48133364" size="0.6 0.23762696 0.11866636" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_5" type="box" pos="-3.6055516 -1.52169596 -0.50186667" size="0.6 0.20281891 0.09813333" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_6" type="box" pos="-3.61388413 -1.16844313 -0.53635187" size="0.6 0.23043392 0.06364813" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_7" type="box" pos="-3.60187628 -0.70900461 -0.49526674" size="0.6 0.30900461 0.10473326" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_8" type="box" pos="-3.87495542 -3.11878721 -0.46603892" size="0.6 0.22016539 0.13396108" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_9" type="box" pos="-3.87342366 -2.77585888 -0.4568904" size="0.6 0.20276295 0.1431096" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_10" type="box" pos="-3.8746991 -2.39538283 -0.48891059" size="0.6 0.2577131 0.11108941" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_11" type="box" pos="-3.86848402 -1.9492782 -0.4990642" size="0.6 0.26839153 0.1009358" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_12" type="box" pos="-3.8723536 -1.51933555 -0.53381124" size="0.6 0.24155112 0.06618876" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_13" type="box" pos="-3.86402108 -1.10039812 -0.49364715" size="0.6 0.25738631 0.10635285" material="groundplane"/>
+      <geom name="cross_circle_lane_0_1_ground_14" type="box" pos="-3.87602893 -0.66150591 -0.44627378" size="0.6 0.26150591 0.15372622" material="groundplane"/>
+      <!-- Platforms 3 and 4, difficulty 0.5. -->
+      <site name="L0.5  dia 24.1cm  gap 9.2-31.5cm" pos="0 -1.8694763 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_3_4_stone_1" type="cylinder" pos="0.1258411 -2.989715 -0.23606245" size="0.1205237 0.26393755" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_2" type="cylinder" pos="-0.1258411 -2.92974062 -0.23606245" size="0.1205237 0.26393755" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_3" type="cylinder" pos="0.1348615 -2.60679965 -0.26138792" size="0.1205237 0.23861208" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_4" type="cylinder" pos="-0.1348615 -2.58316629 -0.26138792" size="0.1205237 0.23861208" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_5" type="cylinder" pos="0.12245152 -2.27393731 -0.25221119" size="0.1205237 0.24778881" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_6" type="cylinder" pos="-0.12245152 -2.09062408 -0.25221119" size="0.1205237 0.24778881" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_7" type="cylinder" pos="0.12457097 -1.76967574 -0.24603902" size="0.1205237 0.25396098" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_8" type="cylinder" pos="-0.12457097 -1.64315449 -0.24603902" size="0.1205237 0.25396098" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_9" type="cylinder" pos="0.12405915 -1.21397132 -0.23707402" size="0.1205237 0.26292598" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_10" type="cylinder" pos="-0.12405915 -1.25353318 -0.23707402" size="0.1205237 0.26292598" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_11" type="cylinder" pos="0.13491296 -0.8451585 -0.24363456" size="0.1205237 0.25636544" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_stone_12" type="cylinder" pos="-0.13491296 -0.91074234 -0.24363456" size="0.1205237 0.25636544" material="stones_material"/>
+      <geom name="cross_circle_lane_3_4_ground_1" type="box" pos="0.1258411 -3.04860497 -0.44808421" size="0.6 0.29034764 0.15191579" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_2" type="box" pos="0.1348615 -2.6193129 -0.4522673" size="0.6 0.21894442 0.1477327" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_3" type="box" pos="0.12245152 -2.2310875 -0.48588917" size="0.6 0.24928098 0.11411083" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_4" type="box" pos="0.12457097 -1.75681503 -0.47480148" size="0.6 0.3049915 0.12519852" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_5" type="box" pos="0.12405915 -1.26069422 -0.44415146" size="0.6 0.27112931 0.15584854" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_6" type="box" pos="0.13491296 -0.78478246 -0.46691291" size="0.6 0.28478246 0.13308709" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_7" type="box" pos="-0.1258411 -3.02770303 -0.46196812" size="0.6 0.31124957 0.13803188" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_8" type="box" pos="-0.1348615 -2.54667432 -0.47359537" size="0.6 0.24977914 0.12640463" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_9" type="box" pos="-0.12245152 -2.10189224 -0.47380513" size="0.6 0.27500295 0.12619487" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_10" type="box" pos="-0.12457097 -1.65761656 -0.50947315" size="0.6 0.24927272 0.09052685" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_11" type="box" pos="-0.12405915 -1.2652408 -0.453021" size="0.6 0.22310304 0.146979" material="groundplane"/>
+      <geom name="cross_circle_lane_3_4_ground_12" type="box" pos="-0.13491296 -0.81106888 -0.5432817" size="0.6 0.31106888 0.0567183" material="groundplane"/>
+      <!-- Platforms 6 and 7, difficulty 0.5. -->
+      <site name="L0.5  dia 24.1cm  gap 5.3-29.3cm" pos="3.7389526 -1.8694763 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_6_7_stone_1" type="cylinder" pos="3.863405 -3.18342539 -0.23612976" size="0.1205237 0.26387024" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_2" type="cylinder" pos="3.61450021 -3.17124976 -0.23612976" size="0.1205237 0.26387024" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_3" type="cylinder" pos="3.87891283 -2.8537497 -0.26780512" size="0.1205237 0.23219488" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_4" type="cylinder" pos="3.59899238 -2.8429587 -0.26780512" size="0.1205237 0.23219488" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_5" type="cylinder" pos="3.85975503 -2.51639794 -0.26840889" size="0.1205237 0.23159111" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_6" type="cylinder" pos="3.61815018 -2.31986494 -0.26840889" size="0.1205237 0.23159111" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_7" type="cylinder" pos="3.87302948 -2.02661659 -0.2496835" size="0.1205237 0.2503165" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_8" type="cylinder" pos="3.60487573 -1.96550122 -0.2496835" size="0.1205237 0.2503165" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_9" type="cylinder" pos="3.87336155 -1.73301009 -0.26501122" size="0.1205237 0.23498878" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_10" type="cylinder" pos="3.60454366 -1.62367186 -0.26501122" size="0.1205237 0.23498878" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_11" type="cylinder" pos="3.87555879 -1.22777319 -0.2380508" size="0.1205237 0.2619492" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_12" type="cylinder" pos="3.60234642 -1.21316901 -0.2380508" size="0.1205237 0.2619492" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_13" type="cylinder" pos="3.86209746 -0.8099688 -0.22862187" size="0.1205237 0.27137813" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_stone_14" type="cylinder" pos="3.61580775 -0.67921641 -0.22862187" size="0.1205237 0.27137813" material="stones_material"/>
+      <geom name="cross_circle_lane_6_7_ground_1" type="box" pos="3.863405 -3.15877007 -0.46170519" size="0.6 0.18018253 0.13829481" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_2" type="box" pos="3.87891283 -2.85183068 -0.47651148" size="0.6 0.20675686 0.12348852" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_3" type="box" pos="3.85975503 -2.47829054 -0.46020889" size="0.6 0.24678328 0.13979111" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_4" type="box" pos="3.87302948 -2.0756603 -0.44340889" size="0.6 0.23584696 0.15659111" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_5" type="box" pos="3.87336155 -1.68010249 -0.54297474" size="0.6 0.23971085 0.05702526" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_6" type="box" pos="3.87555879 -1.24963132 -0.47302141" size="0.6 0.27076032 0.12697859" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_7" type="box" pos="3.86209746 -0.7294355 -0.45973151" size="0.6 0.3294355 0.14026849" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_8" type="box" pos="3.61450021 -3.15302842 -0.51246139" size="0.6 0.18592419 0.08753861" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_9" type="box" pos="3.59899238 -2.79425803 -0.50208315" size="0.6 0.2528462 0.09791685" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_10" type="box" pos="3.61815018 -2.36204745 -0.54319309" size="0.6 0.25936437 0.05680691" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_11" type="box" pos="3.60487573 -1.96863481 -0.52246815" size="0.6 0.21404827 0.07753185" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_12" type="box" pos="3.60454366 -1.60650349 -0.49273649" size="0.6 0.22808305 0.10726351" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_13" type="box" pos="3.60234642 -1.18230658 -0.46459293" size="0.6 0.27611386 0.13540707" material="groundplane"/>
+      <geom name="cross_circle_lane_6_7_ground_14" type="box" pos="3.61580775 -0.69309636 -0.54804315" size="0.6 0.29309636 0.05195685" material="groundplane"/>
+      <!-- Platforms 0 and 3, difficulty 0.1. -->
+      <site name="L0.1  dia 27.4cm  gap 2.0-14.3cm" pos="-1.8694763 -3.7389526 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_0_3_stone_1" type="cylinder" pos="-3.11351468 -3.89146293 -0.25166395" size="0.13694266 0.24833605" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_2" type="cylinder" pos="-3.15978393 -3.58644228 -0.25166395" size="0.13694266 0.24833605" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_3" type="cylinder" pos="-2.77801485 -3.87677134 -0.24084755" size="0.13694266 0.25915245" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_4" type="cylinder" pos="-2.7681482 -3.60113387 -0.24084755" size="0.13694266 0.25915245" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_5" type="cylinder" pos="-2.44113864 -3.8907905 -0.25870873" size="0.13694266 0.24129127" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_6" type="cylinder" pos="-2.37417031 -3.5871147 -0.25870873" size="0.13694266 0.24129127" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_7" type="cylinder" pos="-2.10639445 -3.88330445 -0.26552643" size="0.13694266 0.23447357" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_8" type="cylinder" pos="-2.00144943 -3.59460075 -0.26552643" size="0.13694266 0.23447357" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_9" type="cylinder" pos="-1.74150656 -3.87849369 -0.26365453" size="0.13694266 0.23634547" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_10" type="cylinder" pos="-1.63867256 -3.59941152 -0.26365453" size="0.13694266 0.23634547" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_11" type="cylinder" pos="-1.38088627 -3.88929154 -0.23336609" size="0.13694266 0.26663391" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_12" type="cylinder" pos="-1.22705414 -3.58861367 -0.23336609" size="0.13694266 0.26663391" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_13" type="cylinder" pos="-1.04512698 -3.88990056 -0.23338701" size="0.13694266 0.26661299" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_14" type="cylinder" pos="-0.89415557 -3.58800465 -0.23338701" size="0.13694266 0.26661299" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_15" type="cylinder" pos="-0.62838662 -3.89199055 -0.26058359" size="0.13694266 0.23941641" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_stone_16" type="cylinder" pos="-0.60027026 -3.58591466 -0.26058359" size="0.13694266 0.23941641" material="stones_material"/>
+      <geom name="cross_circle_lane_0_3_ground_1" type="box" pos="-3.12235868 -3.89146293 -0.53243351" size="0.21659392 0.6 0.06756649" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_2" type="box" pos="-2.77767076 -3.87677134 -0.47793322" size="0.20809401 0.6 0.12206678" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_3" type="box" pos="-2.44167164 -3.8907905 -0.47849128" size="0.2079051 0.6 0.12150872" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_4" type="box" pos="-2.09885852 -3.88330445 -0.51054171" size="0.21490802 0.6 0.08945829" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_5" type="box" pos="-1.74257346 -3.87849369 -0.46832402" size="0.22137705 0.6 0.13167598" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_6" type="box" pos="-1.38710152 -3.88929154 -0.43865453" size="0.2140949 0.6 0.16134547" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_7" type="box" pos="-1.02488171 -3.88990056 -0.47606064" size="0.22812491 0.6 0.12393936" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_8" type="box" pos="-0.6383784 -3.89199055 -0.48328258" size="0.2383784 0.6 0.11671742" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_9" type="box" pos="-3.13145933 -3.58644228 -0.45534821" size="0.20749327 0.6 0.14465179" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_10" type="box" pos="-2.76756266 -3.60113387 -0.46515016" size="0.2364034 0.6 0.13484984" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_11" type="box" pos="-2.37948456 -3.5871147 -0.47631697" size="0.23167469 0.6 0.12368303" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_12" type="box" pos="-2.00393543 -3.59460075 -0.47637854" size="0.22387444 0.6 0.12362146" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_13" type="box" pos="-1.62646217 -3.59941152 -0.48090614" size="0.23359882 0.6 0.11909386" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_14" type="box" pos="-1.2467341 -3.58861367 -0.5054906" size="0.22612925 0.6 0.0945094" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_15" type="box" pos="-0.90390888 -3.58800465 -0.45042858" size="0.19669597 0.6 0.14957142" material="groundplane"/>
+      <geom name="cross_circle_lane_0_3_ground_16" type="box" pos="-0.59360646 -3.58591466 -0.54414851" size="0.19360646 0.6 0.05585149" material="groundplane"/>
+      <!-- Platforms 1 and 4, difficulty 0.1. -->
+      <site name="L0.1  dia 27.4cm  gap 3.1-10.3cm" pos="-1.8694763 0 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_1_4_stone_1" type="cylinder" pos="-3.10185749 -0.15401072 -0.27208486" size="0.13694266 0.22791514" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_2" type="cylinder" pos="-3.14933193 0.15401072 -0.27208486" size="0.13694266 0.22791514" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_3" type="cylinder" pos="-2.72460364 -0.14257033 -0.24190417" size="0.13694266 0.25809583" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_4" type="cylinder" pos="-2.8087716 0.14257033 -0.24190417" size="0.13694266 0.25809583" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_5" type="cylinder" pos="-2.39810286 -0.1480833 -0.24178432" size="0.13694266 0.25821568" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_6" type="cylinder" pos="-2.4418675 0.1480833 -0.24178432" size="0.13694266 0.25821568" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_7" type="cylinder" pos="-2.07052437 -0.14507039 -0.26665135" size="0.13694266 0.23334865" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_8" type="cylinder" pos="-2.11700278 0.14507039 -0.26665135" size="0.13694266 0.23334865" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_9" type="cylinder" pos="-1.76580182 -0.1373969 -0.23888203" size="0.13694266 0.26111797" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_10" type="cylinder" pos="-1.78187409 0.1373969 -0.23888203" size="0.13694266 0.26111797" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_11" type="cylinder" pos="-1.45233259 -0.1461802 -0.24994776" size="0.13694266 0.25005224" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_12" type="cylinder" pos="-1.43131954 0.1461802 -0.24994776" size="0.13694266 0.25005224" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_13" type="cylinder" pos="-1.07682472 -0.1399889 -0.25269219" size="0.13694266 0.24730781" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_14" type="cylinder" pos="-1.08045172 0.1399889 -0.25269219" size="0.13694266 0.24730781" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_15" type="cylinder" pos="-0.75756402 -0.14456308 -0.24348587" size="0.13694266 0.25651413" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_stone_16" type="cylinder" pos="-0.70572039 0.14456308 -0.24348587" size="0.13694266 0.25651413" material="stones_material"/>
+      <geom name="cross_circle_lane_1_4_ground_1" type="box" pos="-3.10609158 -0.15401072 -0.45687165" size="0.23286102 0.6 0.14312835" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_2" type="box" pos="-2.73729191 -0.14257033 -0.5134939" size="0.21593866 0.6 0.0865061" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_3" type="box" pos="-2.39783343 -0.1480833 -0.44165135" size="0.20351982 0.6 0.15834865" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_4" type="box" pos="-2.07623835 -0.14507039 -0.54305917" size="0.19807526 0.6 0.05694083" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_5" type="box" pos="-1.76361515 -0.1373969 -0.44165135" size="0.19454794 0.6 0.15834865" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_6" type="box" pos="-1.43682293 -0.1461802 -0.54485788" size="0.21224427 0.6 0.05514212" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_7" type="box" pos="-1.09088651 -0.1399889 -0.52564658" size="0.21369214 0.6 0.07435342" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_8" type="box" pos="-0.72859718 -0.14456308 -0.49656344" size="0.22859718 0.6 0.10343656" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_9" type="box" pos="-3.13900219 0.15401072 -0.52762873" size="0.19995042 0.6 0.07237127" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_10" type="box" pos="-2.80218566 0.14257033 -0.52273064" size="0.21686611 0.6 0.07726936" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_11" type="box" pos="-2.45237735 0.1480833 -0.54280996" size="0.21294221 0.6 0.05719004" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_12" type="box" pos="-2.11443679 0.14507039 -0.4691051" size="0.20499835 0.6 0.1308949" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_13" type="box" pos="-1.77801762 0.1373969 -0.49420196" size="0.21142081 0.6 0.10579804" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_14" type="box" pos="-1.43124122 0.1461802 -0.43683388" size="0.21535559 0.6 0.16316612" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_15" type="box" pos="-1.07448584 0.1399889 -0.50305407" size="0.22139979 0.6 0.09694593" material="groundplane"/>
+      <geom name="cross_circle_lane_1_4_ground_16" type="box" pos="-0.71654303 0.14456308 -0.4410131" size="0.21654303 0.6 0.1589869" material="groundplane"/>
+      <!-- Platforms 2 and 5, difficulty 0.1. -->
+      <site name="L0.1  dia 27.4cm  gap 3.1-12.1cm" pos="-1.8694763 3.7389526 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_2_5_stone_1" type="cylinder" pos="-3.17914954 3.5947737 -0.2690997" size="0.13694266 0.2309003" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_2" type="cylinder" pos="-3.12231083 3.88313151 -0.2690997" size="0.13694266 0.2309003" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_3" type="cylinder" pos="-2.83125482 3.58277199 -0.24001464" size="0.13694266 0.25998536" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_4" type="cylinder" pos="-2.73789171 3.89513321 -0.24001464" size="0.13694266 0.25998536" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_5" type="cylinder" pos="-2.462448 3.59669255 -0.23606245" size="0.13694266 0.26393755" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_6" type="cylinder" pos="-2.42900066 3.88121266 -0.23606245" size="0.13694266 0.26393755" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_7" type="cylinder" pos="-2.13377328 3.58767214 -0.26138792" size="0.13694266 0.23861208" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_8" type="cylinder" pos="-2.06568345 3.89023306 -0.26138792" size="0.13694266 0.23861208" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_9" type="cylinder" pos="-1.74950043 3.60008213 -0.25221119" size="0.13694266 0.24778881" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_10" type="cylinder" pos="-1.76057656 3.87782308 -0.25221119" size="0.13694266 0.24778881" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_11" type="cylinder" pos="-1.35458053 3.59796268 -0.24603902" size="0.13694266 0.25396098" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_12" type="cylinder" pos="-1.37651909 3.87994253 -0.24603902" size="0.13694266 0.25396098" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_13" type="cylinder" pos="-0.99629104 3.59847449 -0.23707402" size="0.13694266 0.26292598" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_14" type="cylinder" pos="-0.99099475 3.87943072 -0.23707402" size="0.13694266 0.26292598" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_15" type="cylinder" pos="-0.6145626 3.58762069 -0.24363456" size="0.13694266 0.25636544" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_stone_16" type="cylinder" pos="-0.61477821 3.89028452 -0.24363456" size="0.13694266 0.25636544" material="stones_material"/>
+      <geom name="cross_circle_lane_2_5_ground_1" type="box" pos="-3.15207739 3.5947737 -0.50392814" size="0.18687521 0.6 0.09607186" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_2" type="box" pos="-2.8260268 3.58277199 -0.49228438" size="0.21917538 0.6 0.10771562" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_3" type="box" pos="-2.47248103 3.59669255 -0.47580529" size="0.21437039 0.6 0.12419471" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_4" type="box" pos="-2.11987375 3.58767214 -0.4957652" size="0.21823689 0.6 0.1042348" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_5" type="box" pos="-1.74683867 3.60008213 -0.52101243" size="0.23479819 0.6 0.07898757" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_6" type="box" pos="-1.36373813 3.59796268 -0.5241104" size="0.22830235 0.6 0.0758896" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_7" type="box" pos="-0.9904313 3.59847449 -0.47995474" size="0.22500448 0.6 0.12004526" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_8" type="box" pos="-0.62271341 3.58762069 -0.49740042" size="0.22271341 0.6 0.10259958" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_9" type="box" pos="-3.11452693 3.88313151 -0.5427179" size="0.22442567 0.6 0.0572821" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_10" type="box" pos="-2.75677372 3.89513321 -0.43117692" size="0.21332754 0.6 0.16882308" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_11" type="box" pos="-2.41539412 3.88121266 -0.43638792" size="0.20805206 0.6 0.16361208" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_12" type="box" pos="-2.08023603 3.89023306 -0.44635273" size="0.20710603 0.6 0.15364727" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_13" type="box" pos="-1.74083891 3.87782308 -0.50798944" size="0.21229109 0.6 0.09201056" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_14" type="box" pos="-1.37615237 3.87994253 -0.47502316" size="0.23239545 0.6 0.12497684" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_15" type="box" pos="-0.9933217 3.87943072 -0.51887306" size="0.23043522 0.6 0.08112694" material="groundplane"/>
+      <geom name="cross_circle_lane_2_5_ground_16" type="box" pos="-0.62144324 3.89028452 -0.50681117" size="0.22144324 0.6 0.09318883" material="groundplane"/>
+      <!-- Platforms 1 and 2, difficulty 0.8. -->
+      <site name="L0.8  dia 21.6cm  gap 8.9-35.2cm" pos="-3.7389526 1.8694763 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_1_2_stone_1" type="cylinder" pos="-3.62814469 0.67627722 -0.26365453" size="0.10820948 0.23634547" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_2" type="cylinder" pos="-3.84976051 0.72722581 -0.26365453" size="0.10820948 0.23634547" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_3" type="cylinder" pos="-3.61734685 1.13087581 -0.23336609" size="0.10820948 0.26663391" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_4" type="cylinder" pos="-3.86055836 1.0329408 -0.23336609" size="0.10820948 0.26663391" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_5" type="cylinder" pos="-3.61673782 1.57777648 -0.23338701" size="0.10820948 0.26661299" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_6" type="cylinder" pos="-3.86116739 1.49946995 -0.23338701" size="0.10820948 0.26661299" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_7" type="cylinder" pos="-3.61464784 1.91110138 -0.26058359" size="0.10820948 0.23941641" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_8" type="cylinder" pos="-3.86325737 1.95137487 -0.26058359" size="0.10820948 0.23941641" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_9" type="cylinder" pos="-3.61709321 2.47909012 -0.26500459" size="0.10820948 0.23499541" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_10" type="cylinder" pos="-3.86081199 2.41624474 -0.26500459" size="0.10820948 0.23499541" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_11" type="cylinder" pos="-3.63059588 2.98239402 -0.24175746" size="0.10820948 0.25824254" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_stone_12" type="cylinder" pos="-3.84730933 2.90872936 -0.24175746" size="0.10820948 0.25824254" material="stones_material"/>
+      <geom name="cross_circle_lane_1_2_ground_1" type="box" pos="-3.62814469 0.67178826 -0.53100765" size="0.6 0.27178826 0.06899235" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_2" type="box" pos="-3.61734685 1.12895133 -0.52122241" size="0.6 0.26537481 0.07877759" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_3" type="box" pos="-3.61673782 1.54938254 -0.44133196" size="0.6 0.23505639 0.15866804" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_4" type="box" pos="-3.61464784 1.96976734 -0.49631234" size="0.6 0.26532841 0.10368766" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_5" type="box" pos="-3.61709321 2.46291891 -0.50666355" size="0.6 0.30782316 0.09333645" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_6" type="box" pos="-3.63059588 3.01484733 -0.5323772" size="0.6 0.32410527 0.0676228" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_7" type="box" pos="-3.84976051 0.66004165 -0.50580778" size="0.6 0.26004165 0.09419222" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_8" type="box" pos="-3.86055836 1.07314434 -0.46680021" size="0.6 0.23306104 0.13319979" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_9" type="box" pos="-3.86116739 1.49581389 -0.46137633" size="0.6 0.26960852 0.13862367" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_10" type="box" pos="-3.86325737 1.95461611 -0.48431149" size="0.6 0.2691937 0.11568851" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_11" type="box" pos="-3.86081199 2.42314843 -0.51171401" size="0.6 0.27933862 0.08828599" material="groundplane"/>
+      <geom name="cross_circle_lane_1_2_ground_12" type="box" pos="-3.84730933 2.98071983 -0.53234411" size="0.6 0.35823278 0.06765589" material="groundplane"/>
+      <!-- Platforms 4 and 5, difficulty 0.8. -->
+      <site name="L0.8  dia 21.6cm  gap 7.0-34.7cm" pos="0 1.8694763 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_4_5_stone_1" type="cylinder" pos="0.1148067 0.73476828 -0.26982985" size="0.10820948 0.23017015" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_2" type="cylinder" pos="-0.1148067 0.86853434 -0.26982985" size="0.10820948 0.23017015" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_3" type="cylinder" pos="0.11996237 1.24309301 -0.22874399" size="0.10820948 0.27125601" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_4" type="cylinder" pos="-0.11996237 1.15501599 -0.22874399" size="0.10820948 0.27125601" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_5" type="cylinder" pos="0.1198307 1.56672373 -0.24545423" size="0.10820948 0.25454577" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_6" type="cylinder" pos="-0.1198307 1.49533616 -0.24545423" size="0.10820948 0.25454577" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_7" type="cylinder" pos="0.10866556 2.11647718 -0.25088483" size="0.10820948 0.24911517" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_8" type="cylinder" pos="-0.10866556 1.97311131 -0.25088483" size="0.10820948 0.24911517" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_9" type="cylinder" pos="0.12386418 2.43905983 -0.25066708" size="0.10820948 0.24933292" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_10" type="cylinder" pos="-0.12386418 2.43549912 -0.25066708" size="0.10820948 0.24933292" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_11" type="cylinder" pos="0.11802362 3.00200154 -0.2464136" size="0.10820948 0.2535864" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_stone_12" type="cylinder" pos="-0.11802362 2.97165494 -0.2464136" size="0.10820948 0.2535864" material="stones_material"/>
+      <geom name="cross_circle_lane_4_5_ground_1" type="box" pos="0.1148067 0.76446532 -0.52675701" size="0.6 0.26446532 0.07324299" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_2" type="box" pos="0.11996237 1.19691951 -0.44482985" size="0.6 0.24798886 0.15517015" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_3" type="box" pos="0.1198307 1.62325441 -0.48989957" size="0.6 0.25834604 0.11010043" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_4" type="box" pos="0.10866556 2.05968448 -0.48970769" size="0.6 0.25808403 0.11029231" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_5" type="box" pos="0.12386418 2.4991496 -0.53229153" size="0.6 0.26138109 0.06770847" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_6" type="box" pos="0.11802362 3.00974165 -0.4809233" size="0.6 0.32921096 0.1190767" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_7" type="box" pos="-0.1148067 0.77588758 -0.48532977" size="0.6 0.27588758 0.11467023" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_8" type="box" pos="-0.11996237 1.16847562 -0.49728396" size="0.6 0.19670046 0.10271604" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_9" type="box" pos="-0.1198307 1.52969991 -0.45497342" size="0.6 0.24452383 0.14502658" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_10" type="box" pos="-0.10866556 1.96926448 -0.44323221" size="0.6 0.27504074 0.15676779" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_11" type="box" pos="-0.12386418 2.45394112 -0.48508296" size="0.6 0.28963591 0.11491704" material="groundplane"/>
+      <geom name="cross_circle_lane_4_5_ground_12" type="box" pos="-0.11802362 3.00126482 -0.4750199" size="0.6 0.33768779 0.1249801" material="groundplane"/>
+      <!-- Platforms 7 and 8, difficulty 0.8. -->
+      <site name="L0.8  dia 21.6cm  gap 11.8-38.4cm" pos="3.7389526 1.8694763 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_7_8_stone_1" type="cylinder" pos="3.85109078 0.89255789 -0.23612976" size="0.10820948 0.26387024" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_2" type="cylinder" pos="3.62681443 0.70830489 -0.23612976" size="0.10820948 0.26387024" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_3" type="cylinder" pos="3.86659861 1.35442345 -0.26780512" size="0.10820948 0.23219488" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_4" type="cylinder" pos="3.6113066 1.25155947 -0.26780512" size="0.10820948 0.23219488" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_5" type="cylinder" pos="3.84744081 1.68919758 -0.26840889" size="0.10820948 0.23159111" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_6" type="cylinder" pos="3.6304644 1.60978649 -0.26840889" size="0.10820948 0.23159111" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_7" type="cylinder" pos="3.86071526 2.24837804 -0.2496835" size="0.10820948 0.2503165" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_8" type="cylinder" pos="3.61718995 2.05551658 -0.2496835" size="0.10820948 0.2503165" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_9" type="cylinder" pos="3.86104733 2.59857419 -0.26501122" size="0.10820948 0.23498878" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_10" type="cylinder" pos="3.61685788 2.48340698 -0.26501122" size="0.10820948 0.23498878" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_11" type="cylinder" pos="3.86324457 2.99008809 -0.2380508" size="0.10820948 0.2619492" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_stone_12" type="cylinder" pos="3.61466063 3.08417435 -0.2380508" size="0.10820948 0.2619492" material="stones_material"/>
+      <geom name="cross_circle_lane_7_8_ground_1" type="box" pos="3.85109078 0.78174534 -0.49307374" size="0.6 0.38174534 0.10692626" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_2" type="box" pos="3.86659861 1.32265059 -0.45299391" size="0.6 0.23915992 0.14700609" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_3" type="box" pos="3.84744081 1.74529916 -0.50908668" size="0.6 0.26348865 0.09091332" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_4" type="box" pos="3.86071526 2.19613196 -0.44614913" size="0.6 0.26734415 0.15385087" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_5" type="box" pos="3.86104733 2.60890363 -0.50214945" size="0.6 0.22542751 0.09785055" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_6" type="box" pos="3.86324457 3.04664187 -0.4914447" size="0.6 0.29231073 0.1085553" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_7" type="box" pos="3.62681443 0.70996609 -0.47584123" size="0.6 0.30996609 0.12415877" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_8" type="box" pos="3.6113066 1.20530258 -0.49882857" size="0.6 0.2653704 0.10117143" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_9" type="box" pos="3.6304644 1.63166226 -0.52483633" size="0.6 0.24098928 0.07516367" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_10" type="box" pos="3.61718995 2.05105666 -0.52484205" size="0.6 0.25840512 0.07515795" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_11" type="box" pos="3.61685788 2.52662622 -0.49414255" size="0.6 0.29716444 0.10585745" material="groundplane"/>
+      <geom name="cross_circle_lane_7_8_ground_12" type="box" pos="3.61466063 3.04137163 -0.49516464" size="0.6 0.29758097 0.10483536" material="groundplane"/>
+      <!-- Platforms 3 and 6, difficulty 1.0. -->
+      <site name="L1.0  dia 20.0cm  gap 20.4-47.3cm" pos="1.8694763 -3.7389526 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_3_6_stone_1" type="cylinder" pos="0.8171055 -3.84199885 -0.25269219" size="0.1 0.24730781" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_2" type="cylinder" pos="0.73440803 -3.63590636 -0.25269219" size="0.1 0.24730781" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_3" type="cylinder" pos="1.23398226 -3.84657303 -0.24348587" size="0.1 0.25651413" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_4" type="cylinder" pos="1.4075668 -3.63133218 -0.24348587" size="0.1 0.25651413" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_5" type="cylinder" pos="1.63796507 -3.84618886 -0.2690997" size="0.1 0.2309003" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_6" type="cylinder" pos="1.81980624 -3.63171635 -0.2690997" size="0.1 0.2309003" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_7" type="cylinder" pos="2.26138235 -3.85819056 -0.24001464" size="0.1 0.25998536" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_8" type="cylinder" pos="2.29778021 -3.61971465 -0.24001464" size="0.1 0.25998536" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_9" type="cylinder" pos="2.78567562 -3.84427 -0.23606245" size="0.1 0.26393755" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_stone_10" type="cylinder" pos="2.93202732 -3.6336352 -0.23606245" size="0.1 0.26393755" material="stones_material"/>
+      <geom name="cross_circle_lane_3_6_ground_1" type="box" pos="0.73277194 -3.84199885 -0.52913779" size="0.33277194 0.6 0.07086221" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_2" type="box" pos="1.23075877 -3.84657303 -0.52327858" size="0.24521489 0.6 0.07672142" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_3" type="box" pos="1.69282369 -3.84618886 -0.46873643" size="0.29685002 0.6 0.13126357" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_4" type="box" pos="2.23660135 -3.85819056 -0.48666077" size="0.32692764 0.6 0.11333923" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_5" type="box" pos="2.9112408 -3.84427 -0.49526081" size="0.42771181 0.6 0.10473919" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_6" type="box" pos="0.75549371 -3.63590636 -0.53382344" size="0.35549371 0.6 0.06617656" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_7" type="box" pos="1.34233697 -3.63133218 -0.49780298" size="0.31134955 0.6 0.10219702" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_8" type="box" pos="1.83623987 -3.63171635 -0.48779116" size="0.26255335 0.6 0.11220884" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_9" type="box" pos="2.33684849 -3.61971465 -0.46552401" size="0.31805527 0.6 0.13447599" material="groundplane"/>
+      <geom name="cross_circle_lane_3_6_ground_10" type="box" pos="2.95692818 -3.6336352 -0.47023347" size="0.38202442 0.6 0.12976653" material="groundplane"/>
+      <!-- Platforms 4 and 7, difficulty 1.0. -->
+      <site name="L1.0  dia 20.0cm  gap 19.6-39.2cm" pos="1.8694763 0 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_4_7_stone_1" type="cylinder" pos="0.80300278 -0.11168196 -0.27077778" size="0.1 0.22922222" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_2" type="cylinder" pos="1.03474637 0.11168196 -0.27077778" size="0.1 0.22922222" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_3" type="cylinder" pos="1.22111892 -0.10831615 -0.25030046" size="0.1 0.24969954" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_4" type="cylinder" pos="1.47369244 0.10831615 -0.25030046" size="0.1 0.24969954" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_5" type="cylinder" pos="1.70307072 -0.10659722 -0.26982985" size="0.1 0.23017015" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_6" type="cylinder" pos="2.03988532 0.10659722 -0.26982985" size="0.1 0.23017015" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_7" type="cylinder" pos="2.29468487 -0.11175289 -0.22874399" size="0.1 0.27125601" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_8" type="cylinder" pos="2.53061579 0.11175289 -0.22874399" size="0.1 0.27125601" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_9" type="cylinder" pos="2.86756605 -0.11162122 -0.24545423" size="0.1 0.25454577" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_stone_10" type="cylinder" pos="2.92671326 0.11162122 -0.24545423" size="0.1 0.25454577" material="stones_material"/>
+      <geom name="cross_circle_lane_4_7_ground_1" type="box" pos="0.77603042 -0.11168196 -0.46101228" size="0.27603042 0.6 0.13898772" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_2" type="box" pos="1.23707783 -0.10831615 -0.52813571" size="0.26501698 0.6 0.07186429" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_3" type="box" pos="1.73048631 -0.10659722 -0.4774678" size="0.30839149 0.6 0.1225322" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_4" type="box" pos="2.29000163 -0.11175289 -0.44482985" size="0.33112383 0.6 0.15517015" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_5" type="box" pos="2.94003903 -0.11162122 -0.53976206" size="0.39891357 0.6 0.06023794" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_6" type="box" pos="0.8971097 0.11168196 -0.46302987" size="0.3971097 0.6 0.13697013" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_7" type="box" pos="1.50550414 0.10831615 -0.46080492" size="0.29128474 0.6 0.13919508" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_8" type="box" pos="2.02101972 0.10659722 -0.4609854" size="0.30423084 0.6 0.1390146" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_9" type="box" pos="2.50695754 0.11175289 -0.42063511" size="0.26170698 0.6 0.17936489" material="groundplane"/>
+      <geom name="cross_circle_lane_4_7_ground_10" type="box" pos="3.01380856 0.11162122 -0.42319386" size="0.32514404 0.6 0.17680614" material="groundplane"/>
+      <!-- Platforms 5 and 8, difficulty 1.0. -->
+      <site name="L1.0  dia 20.0cm  gap 24.3-39.0cm" pos="1.8694763 3.7389526 0.08" size="0.0005" group="2"/>
+      <geom name="cross_circle_lane_5_8_stone_1" type="cylinder" pos="0.74377193 3.63849653 -0.25088483" size="0.1 0.24911517" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_2" type="cylinder" pos="0.81325968 3.83940868 -0.25088483" size="0.1 0.24911517" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_3" type="cylinder" pos="1.29908634 3.6232979 -0.25066708" size="0.1 0.24933292" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_4" type="cylinder" pos="1.39655323 3.85460731 -0.25066708" size="0.1 0.24933292" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_5" type="cylinder" pos="1.8359902 3.62913846 -0.2464136" size="0.1 0.2535864" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_6" type="cylinder" pos="1.98654927 3.84876674 -0.2464136" size="0.1 0.2535864" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_7" type="cylinder" pos="2.35246832 3.62948282 -0.25842155" size="0.1 0.24157845" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_8" type="cylinder" pos="2.42994795 3.84842239 -0.25842155" size="0.1 0.24157845" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_9" type="cylinder" pos="2.91092953 3.62853916 -0.2739194" size="0.1 0.2260806" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_stone_10" type="cylinder" pos="2.92754315 3.84936605 -0.2739194" size="0.1 0.2260806" material="stones_material"/>
+      <geom name="cross_circle_lane_5_8_ground_1" type="box" pos="0.73071457 3.63849653 -0.43276024" size="0.33071457 0.6 0.16723976" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_2" type="box" pos="1.2944837 3.6232979 -0.44738077" size="0.31305457 0.6 0.15261923" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_3" type="box" pos="1.83088377 3.62913846 -0.42827779" size="0.3033455 0.6 0.17172221" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_4" type="box" pos="2.36296409 3.62948282 -0.50233618" size="0.30873483 0.6 0.09766382" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_5" type="box" pos="2.96532576 3.62853916 -0.51772643" size="0.37362684 0.6 0.08227357" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_6" type="box" pos="0.77245323 3.83940868 -0.47474034" size="0.37245323 0.6 0.12525966" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_7" type="box" pos="1.39822885 3.85460731 -0.46520384" size="0.3333224 0.6 0.13479616" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_8" type="box" pos="1.94989993 3.84876674 -0.48628881" size="0.29834868 0.6 0.11371119" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_9" type="box" pos="2.44349708 3.84842239 -0.53542827" size="0.27524847 0.6 0.06457173" material="groundplane"/>
+      <geom name="cross_circle_lane_5_8_ground_10" type="box" pos="2.98884908 3.84936605 -0.53495229" size="0.35010352 0.6 0.06504771" material="groundplane"/>
+    </body>
+
+    <body name="cross" pos="0 -5.155 0">
+      <geom name="cross_platform_0" type="box" pos="-3.755 -3.755 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_platform_1" type="box" pos="-3.755 0 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_platform_2" type="box" pos="-3.755 3.755 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_platform_3" type="box" pos="0 -3.755 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_center" type="box" pos="0 0 -0.25" size="0.5 0.5 0.25" material="stones_material"/>
+      <geom name="cross_platform_5" type="box" pos="0 3.755 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_platform_6" type="box" pos="3.755 -3.755 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_platform_7" type="box" pos="3.755 0 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <geom name="cross_platform_8" type="box" pos="3.755 3.755 -0.25" size="0.4 0.4 0.25" material="stones_material"/>
+      <!-- Platforms 1 and 2, difficulty 0.5. -->
+      <site name="L0.5  side 22.5cm  gap 7.0-28.7cm" pos="-3.755 1.8775 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_1_2_stone_1" type="box" pos="-3.6284947 0.73730964 -0.23338701" size="0.1125 0.1125 0.26661299" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_2" type="box" pos="-3.8815053 0.60174881 -0.23338701" size="0.1125 0.1125 0.26661299" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_3" type="box" pos="-3.62640471 1.2497527 -0.26058359" size="0.1125 0.1125 0.23941641" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_4" type="box" pos="-3.88359529 0.92929668 -0.26058359" size="0.1125 0.1125 0.23941641" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_5" type="box" pos="-3.62885009 1.59458397 -0.26500459" size="0.1125 0.1125 0.23499541" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_6" type="box" pos="-3.88114991 1.40947646 -0.26500459" size="0.1125 0.1125 0.23499541" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_7" type="box" pos="-3.64235275 1.91080795 -0.24175746" size="0.1125 0.1125 0.25824254" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_8" type="box" pos="-3.86764725 1.82231955 -0.24175746" size="0.1125 0.1125 0.25824254" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_9" type="box" pos="-3.62839669 2.36084107 -0.25205421" size="0.1125 0.1125 0.24794579" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_10" type="box" pos="-3.88160331 2.16260414 -0.25205421" size="0.1125 0.1125 0.24794579" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_11" type="box" pos="-3.63112518 2.76774071 -0.2692735" size="0.1125 0.1125 0.2307265" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_12" type="box" pos="-3.87887482 2.59807806 -0.2692735" size="0.1125 0.1125 0.2307265" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_13" type="box" pos="-3.62913194 3.06284048 -0.24673819" size="0.1125 0.1125 0.25326181" material="stones_material"/>
+      <geom name="cross_lane_1_2_stone_14" type="box" pos="-3.88086806 3.09762549 -0.24673819" size="0.1125 0.1125 0.25326181" material="stones_material"/>
+      <geom name="cross_lane_1_2_ground_1" type="box" pos="-3.6284947 0.71676558 -0.43558359" size="0.6 0.31676558 0.16441641" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_2" type="box" pos="-3.62640471 1.20784975 -0.45634999" size="0.6 0.25431858 0.14365001" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_3" type="box" pos="-3.62885009 1.58743215 -0.46604544" size="0.6 0.20526381 0.13395456" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_4" type="box" pos="-3.64235275 1.94426024 -0.44998649" size="0.6 0.23156428 0.15001351" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_5" type="box" pos="-3.62839669 2.3500577 -0.49728486" size="0.6 0.25423319 0.10271514" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_6" type="box" pos="-3.63112518 2.73979074 -0.48828347" size="0.6 0.21549985 0.11171653" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_7" type="box" pos="-3.62913194 3.1151453 -0.4442735" size="0.6 0.2398547 0.1557265" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_8" type="box" pos="-3.8815053 0.60276137 -0.46129563" size="0.6 0.20276137 0.13870437" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_9" type="box" pos="-3.88359529 0.96745466 -0.49550952" size="0.6 0.24193191 0.10449048" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_10" type="box" pos="-3.88114991 1.39264229 -0.45118803" size="0.6 0.26325572 0.14881197" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_11" type="box" pos="-3.86764725 1.80417992 -0.52780959" size="0.6 0.22828192 0.07219041" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_12" type="box" pos="-3.88160331 2.18640147 -0.4334427" size="0.6 0.23393963 0.1665573" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_13" type="box" pos="-3.87887482 2.61409643 -0.54205379" size="0.6 0.27375534 0.05794621" material="groundplane"/>
+      <geom name="cross_lane_1_2_ground_14" type="box" pos="-3.88086806 3.08142589 -0.4442735" size="0.6 0.27357411 0.1557265" material="groundplane"/>
+      <!-- Platforms 4 and 5, difficulty 0.5. -->
+      <site name="L0.5  side 22.5cm  gap 9.2-29.3cm" pos="0 1.8775 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_4_5_stone_1" type="box" pos="0.12291345 0.79677849 -0.2739194" size="0.1125 0.1125 0.2260806" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_2" type="box" pos="-0.12291345 0.83069642 -0.2739194" size="0.1125 0.1125 0.2260806" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_3" type="box" pos="0.12902584 1.17332156 -0.26798755" size="0.1125 0.1125 0.23201245" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_4" type="box" pos="-0.12902584 1.25887429 -0.26798755" size="0.1125 0.1125 0.23201245" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_5" type="box" pos="0.12358072 1.57374248 -0.241388" size="0.1125 0.1125 0.258612" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_6" type="box" pos="-0.12358072 1.63917 -0.241388" size="0.1125 0.1125 0.258612" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_7" type="box" pos="0.11812468 1.94084929 -0.23865027" size="0.1125 0.1125 0.26134973" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_8" type="box" pos="-0.11812468 2.00222142 -0.23865027" size="0.1125 0.1125 0.26134973" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_9" type="box" pos="0.12787295 2.35838624 -0.22919941" size="0.1125 0.1125 0.27080059" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_10" type="box" pos="-0.12787295 2.31924916 -0.22919941" size="0.1125 0.1125 0.27080059" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_11" type="box" pos="0.11710428 2.67503913 -0.24725738" size="0.1125 0.1125 0.25274262" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_12" type="box" pos="-0.11710428 2.67132032 -0.24725738" size="0.1125 0.1125 0.25274262" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_13" type="box" pos="0.11991845 3.12046278 -0.23458743" size="0.1125 0.1125 0.26541257" material="stones_material"/>
+      <geom name="cross_lane_4_5_stone_14" type="box" pos="-0.11991845 3.18916161 -0.23458743" size="0.1125 0.1125 0.26541257" material="stones_material"/>
+      <geom name="cross_lane_4_5_ground_1" type="box" pos="0.12291345 0.76252501 -0.5112018" size="0.6 0.26252501 0.0887982" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_2" type="box" pos="0.12902584 1.17929102 -0.46131785" size="0.6 0.234241 0.13868215" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_3" type="box" pos="0.12358072 1.56541395 -0.49187218" size="0.6 0.23188193 0.10812782" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_4" type="box" pos="0.11812468 1.95345682 -0.49170102" size="0.6 0.23616094 0.10829898" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_5" type="box" pos="0.12787295 2.33316522 -0.47214032" size="0.6 0.22354746 0.12785968" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_6" type="box" pos="0.11710428 2.70723182 -0.48901973" size="0.6 0.23051914 0.11098027" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_7" type="box" pos="0.11991845 3.10637548 -0.51685188" size="0.6 0.24862452 0.08314812" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_8" type="box" pos="-0.12291345 0.79239268 -0.52970753" size="0.6 0.29239268 0.07029247" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_9" type="box" pos="-0.12902584 1.24690375 -0.49565407" size="0.6 0.24211839 0.10434593" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_10" type="box" pos="-0.12358072 1.63485892 -0.49650088" size="0.6 0.22583678 0.10349912" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_11" type="box" pos="-0.11812468 1.9907155 -0.54062408" size="0.6 0.21001979 0.05937592" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_12" type="box" pos="-0.12787295 2.32801001 -0.42165664" size="0.6 0.20727472 0.17834336" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_13" type="box" pos="-0.11710428 2.71276285 -0.43721649" size="0.6 0.25747811 0.16278351" material="groundplane"/>
+      <geom name="cross_lane_4_5_ground_14" type="box" pos="-0.11991845 3.12262048 -0.42190287" size="0.6 0.23237952 0.17809713" material="groundplane"/>
+      <!-- Platforms 7 and 8, difficulty 0.5. -->
+      <site name="L0.5  side 22.5cm  gap 3.9-30.9cm" pos="3.755 1.8775 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_7_8_stone_1" type="box" pos="3.87588229 0.73497566 -0.24519787" size="0.1125 0.1125 0.25480213" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_2" type="box" pos="3.63411771 0.73306301 -0.24519787" size="0.1125 0.1125 0.25480213" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_3" type="box" pos="3.88616046 1.17810195 -0.25163092" size="0.1125 0.1125 0.24836908" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_4" type="box" pos="3.62383954 1.18866999 -0.25163092" size="0.1125 0.1125 0.24836908" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_5" type="box" pos="3.88319527 1.44215154 -0.2695428" size="0.1125 0.1125 0.2304572" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_6" type="box" pos="3.62680473 1.6990355 -0.2695428" size="0.1125 0.1125 0.2304572" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_7" type="box" pos="3.88408857 1.85785902 -0.26336796" size="0.1125 0.1125 0.23663204" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_8" type="box" pos="3.62591143 1.97883847 -0.26336796" size="0.1125 0.1125 0.23663204" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_9" type="box" pos="3.87811539 2.26864537 -0.23161305" size="0.1125 0.1125 0.26838695" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_10" type="box" pos="3.63188461 2.24270138 -0.23161305" size="0.1125 0.1125 0.26838695" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_11" type="box" pos="3.87956214 2.80302987 -0.2562908" size="0.1125 0.1125 0.2437092" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_12" type="box" pos="3.63043786 2.67117619 -0.2562908" size="0.1125 0.1125 0.2437092" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_13" type="box" pos="3.87601764 3.0856619 -0.23162547" size="0.1125 0.1125 0.26837453" material="stones_material"/>
+      <geom name="cross_lane_7_8_stone_14" type="box" pos="3.63398236 3.14082581 -0.23162547" size="0.1125 0.1125 0.26837453" material="stones_material"/>
+      <geom name="cross_lane_7_8_ground_1" type="box" pos="3.87588229 0.6982694 -0.45704979" size="0.6 0.2982694 0.14295021" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_2" type="box" pos="3.88616046 1.13333278 -0.52987808" size="0.6 0.21679397 0.07012192" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_3" type="box" pos="3.88319527 1.48006601 -0.45576551" size="0.6 0.20993927 0.14423449" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_4" type="box" pos="3.88408857 1.85662874 -0.54990006" size="0.6 0.24662346 0.05009994" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_5" type="box" pos="3.87811539 2.29954491 -0.50206355" size="0.6 0.27629271 0.09793645" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_6" type="box" pos="3.87956214 2.74009175 -0.50846662" size="0.6 0.24425413 0.09153338" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_7" type="box" pos="3.87601764 3.12967294 -0.4312908" size="0.6 0.22532706 0.1687092" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_8" type="box" pos="3.63411771 0.70043325 -0.53663472" size="0.6 0.30043325 0.06336528" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_9" type="box" pos="3.62383954 1.20235962 -0.4445428" size="0.6 0.28149312 0.1554572" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_10" type="box" pos="3.62680473 1.64139486 -0.46993985" size="0.6 0.23754212 0.13006015" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_11" type="box" pos="3.62591143 1.97485345 -0.45433379" size="0.6 0.17591647 0.14566621" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_12" type="box" pos="3.63188461 2.28385435 -0.51799144" size="0.6 0.21308443 0.08200856" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_13" type="box" pos="3.63043786 2.68146989 -0.45481946" size="0.6 0.26453111 0.14518054" material="groundplane"/>
+      <geom name="cross_lane_7_8_ground_14" type="box" pos="3.63398236 3.1105005 -0.5371878" size="0.6 0.2444995 0.0628122" material="groundplane"/>
+      <!-- Platforms 3 and 6, difficulty 0.1. -->
+      <site name="L0.1  side 24.5cm  gap 2.9-11.6cm" pos="1.8775 -3.755 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_3_6_stone_1" type="box" pos="0.6525 -3.88312468 -0.23865027" size="0.1225 0.1225 0.26134973" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_2" type="box" pos="0.64281395 -3.62687532 -0.23865027" size="0.1225 0.1225 0.26134973" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_3" type="box" pos="0.9802699 -3.89287295 -0.22919941" size="0.1225 0.1225 0.27080059" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_4" type="box" pos="0.9859095 -3.61712705 -0.22919941" size="0.1225 0.1225 0.27080059" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_5" type="box" pos="1.3045733 -3.88210428 -0.24725738" size="0.1225 0.1225 0.25274262" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_6" type="box" pos="1.34526573 -3.62789572 -0.24725738" size="0.1225 0.1225 0.25274262" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_7" type="box" pos="1.60088729 -3.88491845 -0.23458743" size="0.1225 0.1225 0.26541257" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_8" type="box" pos="1.63304323 -3.62508155 -0.23458743" size="0.1225 0.1225 0.26541257" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_9" type="box" pos="1.90475696 -3.88384278 -0.26045411" size="0.1225 0.1225 0.23954589" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_10" type="box" pos="1.92942538 -3.62615722 -0.26045411" size="0.1225 0.1225 0.23954589" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_11" type="box" pos="2.20299165 -3.88780114 -0.22819782" size="0.1225 0.1225 0.27180218" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_12" type="box" pos="2.29015606 -3.62219886 -0.22819782" size="0.1225 0.1225 0.27180218" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_13" type="box" pos="2.50249803 -3.88079216 -0.25324515" size="0.1225 0.1225 0.24675485" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_14" type="box" pos="2.57441754 -3.62920784 -0.25324515" size="0.1225 0.1225 0.24675485" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_15" type="box" pos="2.83349173 -3.89734751 -0.2375696" size="0.1225 0.1225 0.2624304" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_16" type="box" pos="2.84847609 -3.61265249 -0.2375696" size="0.1225 0.1225 0.2624304" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_17" type="box" pos="3.17786745 -3.89531585 -0.24905708" size="0.1225 0.1225 0.25094292" material="stones_material"/>
+      <geom name="cross_lane_3_6_stone_18" type="box" pos="3.19784823 -3.61468415 -0.24905708" size="0.1225 0.1225 0.25094292" material="stones_material"/>
+      <geom name="cross_lane_3_6_ground_1" type="box" pos="0.62819248 -3.88312468 -0.43315126" size="0.22819248 0.6 0.16684874" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_2" type="box" pos="0.97940328 -3.89287295 -0.51745263" size="0.20301832 0.6 0.08254737" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_3" type="box" pos="1.29757595 -3.88210428 -0.4475765" size="0.19515435 0.6 0.1524235" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_4" type="box" pos="1.60277621 -3.88491845 -0.53745248" size="0.19004591 0.6 0.06254752" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_5" type="box" pos="1.90334821 -3.88384278 -0.51062703" size="0.19052609 0.6 0.08937297" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_6" type="box" pos="2.20330957 -3.88780114 -0.43545411" size="0.18943527 0.6 0.16454589" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_7" type="box" pos="2.51036986 -3.88079216 -0.42890626" size="0.19762502 0.6 0.17109374" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_8" type="box" pos="2.83683724 -3.89734751 -0.42824515" size="0.20884236 0.6 0.17175485" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_9" type="box" pos="3.1603398 -3.89531585 -0.50036907" size="0.1946602 0.6 0.09963093" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_10" type="box" pos="0.62718086 -3.62687532 -0.5229321" size="0.22718086 0.6 0.0770679" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_11" type="box" pos="0.98997467 -3.61712705 -0.43898055" size="0.21561294 0.6 0.16101945" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_12" type="box" pos="1.32737105 -3.62789572 -0.53076309" size="0.20178343 0.6 0.06923691" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_13" type="box" pos="1.63519439 -3.62508155 -0.43545411" size="0.18603991 0.6 0.16454589" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_14" type="box" pos="1.94551251 -3.62615722 -0.52720123" size="0.20427821 0.6 0.07279877" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_15" type="box" pos="2.27103876 -3.62219886 -0.53940021" size="0.20124804 0.6 0.06059979" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_16" type="box" pos="2.57186681 -3.62920784 -0.52225309" size="0.17958001 0.6 0.07774691" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_17" type="box" pos="2.86730449 -3.61265249 -0.50851262" size="0.19585767 0.6 0.09148738" material="groundplane"/>
+      <geom name="cross_lane_3_6_ground_18" type="box" pos="3.16908108 -3.61468415 -0.52959476" size="0.18591892 0.6 0.07040524" material="groundplane"/>
+      <!-- Platforms 4 and 7, difficulty 0.1. -->
+      <site name="L0.1  side 24.5cm  gap 3.7-17.7cm" pos="1.8775 0 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_4_7_stone_1" type="box" pos="0.6817329 -0.13605317 -0.2496835" size="0.1225 0.1225 0.2503165" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_2" type="box" pos="0.69216793 0.13605317 -0.2496835" size="0.1225 0.1225 0.2503165" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_3" type="box" pos="0.98429718 -0.13638525 -0.26501122" size="0.1225 0.1225 0.23498878" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_4" type="box" pos="1.10116938 0.13638525 -0.26501122" size="0.1225 0.1225 0.23498878" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_5" type="box" pos="1.36042994 -0.13858249 -0.2380508" size="0.1225 0.1225 0.2619492" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_6" type="box" pos="1.43132767 0.13858249 -0.2380508" size="0.1225 0.1225 0.2619492" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_7" type="box" pos="1.64250641 -0.12512116 -0.22862187" size="0.1225 0.1225 0.27137813" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_8" type="box" pos="1.71914535 0.12512116 -0.22862187" size="0.1225 0.1225 0.27137813" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_9" type="box" pos="1.97475288 -0.13045156 -0.2505708" size="0.1225 0.1225 0.2494292" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_10" type="box" pos="2.06507701 0.13045156 -0.2505708" size="0.1225 0.1225 0.2494292" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_11" type="box" pos="2.26756763 -0.13575728 -0.26067769" size="0.1225 0.1225 0.23932231" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_12" type="box" pos="2.37818457 0.13575728 -0.26067769" size="0.1225 0.1225 0.23932231" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_13" type="box" pos="2.68984929 -0.14099617 -0.2472401" size="0.1225 0.1225 0.2527599" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_14" type="box" pos="2.78806072 0.14099617 -0.2472401" size="0.1225 0.1225 0.2527599" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_15" type="box" pos="3.08551045 -0.1351795 -0.26798302" size="0.1225 0.1225 0.23201698" material="stones_material"/>
+      <geom name="cross_lane_4_7_stone_16" type="box" pos="3.11529729 0.1351795 -0.26798302" size="0.1225 0.1225 0.23201698" material="stones_material"/>
+      <geom name="cross_lane_4_7_ground_1" type="box" pos="0.68650752 -0.13605317 -0.44001122" size="0.18650752 0.6 0.15998878" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_2" type="box" pos="1.0026893 -0.13638525 -0.53725733" size="0.20967426 0.6 0.06274267" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_3" type="box" pos="1.33691587 -0.13858249 -0.51022698" size="0.20455231 0.6 0.08977302" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_4" type="box" pos="1.65504891 -0.12512116 -0.428964" size="0.19358073 0.6 0.171036" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_5" type="box" pos="1.96489495 -0.13045156 -0.43698357" size="0.1962653 0.6 0.16301643" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_6" type="box" pos="2.29993436 -0.13575728 -0.45665963" size="0.2187741 0.6 0.14334037" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_7" type="box" pos="2.68319416 -0.14099617 -0.54744827" size="0.24448571 0.6 0.05255173" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_8" type="box" pos="3.10133994 -0.1351795 -0.4920568" size="0.25366006 0.6 0.1079432" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_9" type="box" pos="0.71833433 0.13605317 -0.52294178" size="0.21833433 0.6 0.07705822" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_10" type="box" pos="1.08145859 0.13638525 -0.510009" size="0.22478993 0.6 0.089991" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_11" type="box" pos="1.42074251 0.13858249 -0.49144232" size="0.19449399 0.6 0.10855768" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_12" type="box" pos="1.73367384 0.12512116 -0.4255708" size="0.19843733 0.6 0.1744292" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_13" type="box" pos="2.05687098 0.13045156 -0.54328387" size="0.20475981 0.6 0.05671613" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_14" type="box" pos="2.40237672 0.13575728 -0.47012787" size="0.22074593 0.6 0.12987213" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_15" type="box" pos="2.76740082 0.14099617 -0.49608752" size="0.22427818 0.6 0.10391248" material="groundplane"/>
+      <geom name="cross_lane_4_7_ground_16" type="box" pos="3.1333395 0.1351795 -0.51787093" size="0.2216605 0.6 0.08212907" material="groundplane"/>
+      <!-- Platforms 5 and 8, difficulty 0.1. -->
+      <site name="L0.1  side 24.5cm  gap 3.5-12.4cm" pos="1.8775 3.755 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_5_8_stone_1" type="box" pos="0.61330524 3.62411771 -0.24519787" size="0.1225 0.1225 0.25480213" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_2" type="box" pos="0.55863734 3.88588229 -0.24519787" size="0.1225 0.1225 0.25480213" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_3" type="box" pos="0.97207549 3.61383954 -0.25163092" size="0.1225 0.1225 0.24836908" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_4" type="box" pos="0.87376943 3.89616046 -0.25163092" size="0.1225 0.1225 0.24836908" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_5" type="box" pos="1.2649494 3.61680473 -0.2695428" size="0.1225 0.1225 0.2304572" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_6" type="box" pos="1.22954962 3.89319527 -0.2695428" size="0.1225 0.1225 0.2304572" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_7" type="box" pos="1.56824073 3.61591143 -0.26336796" size="0.1225 0.1225 0.23663204" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_8" type="box" pos="1.53990048 3.89408857 -0.26336796" size="0.1225 0.1225 0.23663204" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_9" type="box" pos="1.91521617 3.62188461 -0.23161305" size="0.1225 0.1225 0.26838695" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_10" type="box" pos="1.87897598 3.88811539 -0.23161305" size="0.1225 0.1225 0.26838695" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_11" type="box" pos="2.20619423 3.62043786 -0.2562908" size="0.1225 0.1225 0.2437092" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_12" type="box" pos="2.20424308 3.88956214 -0.2562908" size="0.1225 0.1225 0.2437092" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_13" type="box" pos="2.57496845 3.62398236 -0.23162547" size="0.1225 0.1225 0.26837453" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_14" type="box" pos="2.53761249 3.88601764 -0.23162547" size="0.1225 0.1225 0.26837453" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_15" type="box" pos="2.87650218 3.62342206 -0.26316688" size="0.1225 0.1225 0.23683312" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_16" type="box" pos="2.81719786 3.88657794 -0.26316688" size="0.1225 0.1225 0.23683312" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_17" type="box" pos="3.16287236 3.61757971 -0.2697361" size="0.1225 0.1225 0.2302639" material="stones_material"/>
+      <geom name="cross_lane_5_8_stone_18" type="box" pos="3.12502688 3.89242029 -0.2697361" size="0.1225 0.1225 0.2302639" material="stones_material"/>
+      <geom name="cross_lane_5_8_ground_1" type="box" pos="0.61634518 3.62411771 -0.50446972" size="0.21634518 0.6 0.09553028" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_2" type="box" pos="0.9556014 3.61383954 -0.54267119" size="0.20291104 0.6 0.05732881" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_3" type="box" pos="1.26755375 3.61680473 -0.46019676" size="0.18904131 0.6 0.13980324" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_4" type="box" pos="1.57916175 3.61591143 -0.49511641" size="0.20256669 0.6 0.10488359" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_5" type="box" pos="1.90121682 3.62188461 -0.46454631" size="0.19948838 0.6 0.13545369" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_6" type="box" pos="2.22564327 3.62043786 -0.48757899" size="0.20493807 0.6 0.11242101" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_7" type="box" pos="2.55815833 3.62398236 -0.43816688" size="0.20757699 0.6 0.16183312" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_8" type="box" pos="2.87271129 3.62342206 -0.4531631" size="0.18697598 0.6 0.1468369" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_9" type="box" pos="3.16734363 3.61757971 -0.47400741" size="0.18765637 0.6 0.12599259" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_10" type="box" pos="0.57810169 3.88588229 -0.45974918" size="0.17810169 0.6 0.14025082" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_11" type="box" pos="0.88393146 3.89616046 -0.47942095" size="0.20772807 0.6 0.12057905" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_12" type="box" pos="1.21819229 3.89319527 -0.50897584" size="0.20653276 0.6 0.09102416" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_13" type="box" pos="1.54708164 3.89408857 -0.5092129" size="0.20235659 0.6 0.0907871" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_14" type="box" pos="1.87552388 3.88811539 -0.46566136" size="0.20608565 0.6 0.13433864" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_15" type="box" pos="2.20626866 3.88956214 -0.47981711" size="0.20465913 0.6 0.12018289" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_16" type="box" pos="2.52416648 3.88601764 -0.43816688" size="0.1932387 0.6 0.16183312" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_17" type="box" pos="2.82425877 3.88657794 -0.503959" size="0.1868536 0.6 0.096041" material="groundplane"/>
+      <geom name="cross_lane_5_8_ground_18" type="box" pos="3.14305618 3.89242029 -0.47810906" size="0.21194382 0.6 0.12189094" material="groundplane"/>
+      <!-- Platforms 0 and 1, difficulty 0.8. -->
+      <site name="L0.8  side 21.0cm  gap 10.5-34.8cm" pos="-3.755 -1.8775 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_0_1_stone_1" type="box" pos="-3.63452088 -2.96665048 -0.2320701" size="0.105 0.105 0.2679299" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_2" type="box" pos="-3.87547912 -2.97212787 -0.2320701" size="0.105 0.105 0.2679299" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_3" type="box" pos="-3.63605264 -2.65193249 -0.22621888" size="0.105 0.105 0.27378112" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_4" type="box" pos="-3.87394736 -2.59147238 -0.22621888" size="0.105 0.105 0.27378112" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_5" type="box" pos="-3.63477721 -2.09414184 -0.26859432" size="0.105 0.105 0.23140568" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_6" type="box" pos="-3.87522279 -2.11932651 -0.26859432" size="0.105 0.105 0.23140568" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_7" type="box" pos="-3.64099228 -1.58796249 -0.22866175" size="0.105 0.105 0.27133825" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_8" type="box" pos="-3.86900772 -1.80430838 -0.22866175" size="0.105 0.105 0.27133825" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_9" type="box" pos="-3.6371227 -1.13553712 -0.25282929" size="0.105 0.105 0.24717071" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_10" type="box" pos="-3.8728773 -1.25849829 -0.25282929" size="0.105 0.105 0.24717071" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_11" type="box" pos="-3.64545523 -0.72464933 -0.27180914" size="0.105 0.105 0.22819086" material="stones_material"/>
+      <geom name="cross_lane_0_1_stone_12" type="box" pos="-3.86454477 -0.8336713 -0.27180914" size="0.105 0.105 0.22819086" material="stones_material"/>
+      <geom name="cross_lane_0_1_ground_1" type="box" pos="-3.63452088 -3.06214574 -0.42580217" size="0.6 0.29285426 0.17419783" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_2" type="box" pos="-3.63605264 -2.59116432 -0.41963111" size="0.6 0.25812716 0.18036889" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_3" type="box" pos="-3.63477721 -2.10704466 -0.54229224" size="0.6 0.3059925 0.05770776" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_4" type="box" pos="-3.64099228 -1.60140098 -0.46184265" size="0.6 0.27965118 0.13815735" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_5" type="box" pos="-3.6371227 -1.14592152 -0.46459641" size="0.6 0.25582829 0.13540359" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_6" type="box" pos="-3.64545523 -0.68504661 -0.49722655" size="0.6 0.28504661 0.10277345" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_7" type="box" pos="-3.87547912 -3.04840006 -0.50181322" size="0.6 0.30659994 0.09818678" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_8" type="box" pos="-3.87394736 -2.56859978 -0.54339758" size="0.6 0.25320034 0.05660242" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_9" type="box" pos="-3.87522279 -2.15860844 -0.47407382" size="0.6 0.236791 0.12592618" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_10" type="box" pos="-3.86900772 -1.74661039 -0.5389966" size="0.6 0.25520705 0.0610034" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_11" type="box" pos="-3.8728773 -1.28874406 -0.43086639" size="0.6 0.28265927 0.16913361" material="groundplane"/>
+      <geom name="cross_lane_0_1_ground_12" type="box" pos="-3.86454477 -0.7430424 -0.5041005" size="0.6 0.3430424 0.0958995" material="groundplane"/>
+      <!-- Platforms 3 and 4, difficulty 0.8. -->
+      <site name="L0.8  side 21.0cm  gap 9.3-34.4cm" pos="0 -1.8775 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_3_4_stone_1" type="box" pos="0.10804624 -3.04517059 -0.25269219" size="0.105 0.105 0.24730781" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_2" type="box" pos="-0.10804624 -3.12568249 -0.25269219" size="0.105 0.105 0.24730781" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_3" type="box" pos="0.11262042 -2.49079793 -0.24348587" size="0.105 0.105 0.25651413" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_4" type="box" pos="-0.11262042 -2.82233431 -0.24348587" size="0.105 0.105 0.25651413" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_5" type="box" pos="0.11223625 -2.17136969 -0.2690997" size="0.105 0.105 0.2309003" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_6" type="box" pos="-0.11223625 -2.27210316 -0.2690997" size="0.105 0.105 0.2309003" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_7" type="box" pos="0.12423795 -1.69522357 -0.24001464" size="0.105 0.105 0.25998536" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_8" type="box" pos="-0.12423795 -1.78106833 -0.24001464" size="0.105 0.105 0.25998536" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_9" type="box" pos="0.1103174 -1.18023122 -0.23606245" size="0.105 0.105 0.26393755" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_10" type="box" pos="-0.1103174 -1.3177489 -0.23606245" size="0.105 0.105 0.26393755" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_11" type="box" pos="0.1193378 -0.78585408 -0.26138792" size="0.105 0.105 0.23861208" material="stones_material"/>
+      <geom name="cross_lane_3_4_stone_12" type="box" pos="-0.1193378 -0.78774314 -0.26138792" size="0.105 0.105 0.23861208" material="stones_material"/>
+      <geom name="cross_lane_3_4_ground_1" type="box" pos="0.10804624 -3.04149213 -0.46658498" size="0.6 0.31350787 0.13341502" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_2" type="box" pos="0.11262042 -2.54953403 -0.4848382" size="0.6 0.25845023 0.1151618" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_3" type="box" pos="0.11223625 -2.13219022 -0.53676299" size="0.6 0.23889359 0.06323701" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_4" type="box" pos="0.12423795 -1.68551201 -0.52990495" size="0.6 0.28778462 0.07009505" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_5" type="box" pos="0.1103174 -1.21038502 -0.41710277" size="0.6 0.26734237 0.18289723" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_6" type="box" pos="0.1193378 -0.76152133 -0.45700833" size="0.6 0.26152133 0.14299167" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_7" type="box" pos="-0.10804624 -3.1445042 -0.45664793" size="0.6 0.2104958 0.14335207" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_8" type="box" pos="-0.11262042 -2.76061357 -0.45128386" size="0.6 0.25339483 0.14871614" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_9" type="box" pos="-0.11223625 -2.28690224 -0.50459341" size="0.6 0.30031649 0.09540659" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_10" type="box" pos="-0.12423795 -1.78799718 -0.47120398" size="0.6 0.27858857 0.12879602" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_11" type="box" pos="-0.1103174 -1.30107732 -0.4179057" size="0.6 0.2883313 0.1820943" material="groundplane"/>
+      <geom name="cross_lane_3_4_ground_12" type="box" pos="-0.1193378 -0.79637301 -0.478835" size="0.6 0.29637301 0.121165" material="groundplane"/>
+      <!-- Platforms 6 and 7, difficulty 0.8. -->
+      <site name="L0.8  side 21.0cm  gap 17.2-32.8cm" pos="3.755 -1.8775 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_6_7_stone_1" type="box" pos="3.87781585 -2.98067505 -0.24905708" size="0.105 0.105 0.25094292" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_2" type="box" pos="3.63218415 -2.89861035 -0.24905708" size="0.105 0.105 0.25094292" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_3" type="box" pos="3.86631858 -2.53343759 -0.24191694" size="0.105 0.105 0.25808306" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_4" type="box" pos="3.64368142 -2.49889189 -0.24191694" size="0.105 0.105 0.25808306" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_5" type="box" pos="3.86747315 -2.09409446 -0.23766052" size="0.105 0.105 0.26233948" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_6" type="box" pos="3.64252685 -2.11398195 -0.23766052" size="0.105 0.105 0.26233948" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_7" type="box" pos="3.86524921 -1.64663418 -0.26295147" size="0.105 0.105 0.23704853" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_8" type="box" pos="3.64475079 -1.64418949 -0.26295147" size="0.105 0.105 0.23704853" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_9" type="box" pos="3.86245516 -1.19865187 -0.26733578" size="0.105 0.105 0.23266422" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_10" type="box" pos="3.64754484 -1.2626575 -0.26733578" size="0.105 0.105 0.23266422" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_11" type="box" pos="3.86358537 -0.66090327 -0.2312719" size="0.105 0.105 0.2687281" material="stones_material"/>
+      <geom name="cross_lane_6_7_stone_12" type="box" pos="3.64641463 -0.84103629 -0.2312719" size="0.105 0.105 0.2687281" material="stones_material"/>
+      <geom name="cross_lane_6_7_ground_1" type="box" pos="3.87781585 -3.03602816 -0.43603372" size="0.6 0.31897184 0.16396628" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_2" type="box" pos="3.86631858 -2.53541117 -0.5134974" size="0.6 0.26164515 0.0865026" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_3" type="box" pos="3.86747315 -2.09206517 -0.42426477" size="0.6 0.26170085 0.17573523" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_4" type="box" pos="3.86524921 -1.64650367 -0.54282215" size="0.6 0.26386065 0.05717785" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_5" type="box" pos="3.86245516 -1.1762103 -0.4571297" size="0.6 0.28643273 0.1428703" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_6" type="box" pos="3.86358537 -0.68488879 -0.54408994" size="0.6 0.28488879 0.05591006" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_7" type="box" pos="3.63218415 -3.00687556 -0.52492277" size="0.6 0.34812444 0.07507723" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_8" type="box" pos="3.64368142 -2.50259402 -0.49592596" size="0.6 0.2361571 0.10407404" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_9" type="box" pos="3.64252685 -2.09276132 -0.52014571" size="0.6 0.2536756 0.07985429" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_10" type="box" pos="3.64475079 -1.66625461 -0.52704292" size="0.6 0.25283111 0.07295708" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_11" type="box" pos="3.64754484 -1.2526352 -0.54418905" size="0.6 0.2407883 0.05581095" material="groundplane"/>
+      <geom name="cross_lane_6_7_ground_12" type="box" pos="3.64641463 -0.74592345 -0.44269021" size="0.6 0.34592345 0.15730979" material="groundplane"/>
+      <!-- Platforms 0 and 3, difficulty 1.0. -->
+      <site name="L1.0  side 20.0cm  gap 25.7-47.6cm" pos="-1.8775 -3.755 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_0_3_stone_1" type="box" pos="-3.02017533 -3.85954477 -0.27180914" size="0.1 0.1 0.22819086" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_2" type="box" pos="-2.92953705 -3.65045523 -0.27180914" size="0.1 0.1 0.22819086" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_3" type="box" pos="-2.56280847 -3.87155262 -0.23709561" size="0.1 0.1 0.26290439" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_4" type="box" pos="-2.25370372 -3.63844738 -0.23709561" size="0.1 0.1 0.26290439" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_5" type="box" pos="-2.07610683 -3.86209052 -0.23034394" size="0.1 0.1 0.26965606" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_6" type="box" pos="-1.76216555 -3.64790948 -0.23034394" size="0.1 0.1 0.26965606" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_7" type="box" pos="-1.44555675 -3.87056767 -0.25166395" size="0.1 0.1 0.24833605" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_8" type="box" pos="-1.29812117 -3.63943233 -0.25166395" size="0.1 0.1 0.24833605" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_9" type="box" pos="-0.97167741 -3.85587608 -0.24084755" size="0.1 0.1 0.25915245" material="stones_material"/>
+      <geom name="cross_lane_0_3_stone_10" type="box" pos="-0.73611275 -3.65412392 -0.24084755" size="0.1 0.1 0.25915245" material="stones_material"/>
+      <geom name="cross_lane_0_3_ground_1" type="box" pos="-3.05324595 -3.85954477 -0.54347969" size="0.30175405 0.6 0.05652031" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_2" type="box" pos="-2.55547477 -3.87155262 -0.44680914" size="0.27601713 0.6 0.15319086" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_3" type="box" pos="-2.04014472 -3.86209052 -0.42310162" size="0.31931293 0.6 0.17689838" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_4" type="box" pos="-1.48472443 -3.87056767 -0.5291701" size="0.31610735 0.6 0.0708299" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_5" type="box" pos="-0.82430854 -3.85587608 -0.43641102" size="0.42430854 0.6 0.16358898" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_6" type="box" pos="-2.95331019 -3.65045523 -0.46530799" size="0.40168981 0.6 0.13469201" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_7" type="box" pos="-2.29977751 -3.63844738 -0.49475313" size="0.33184287 0.6 0.10524687" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_8" type="box" pos="-1.769039 -3.64790948 -0.53185464" size="0.27889564 0.6 0.06814536" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_9" type="box" pos="-1.27363016 -3.63943233 -0.45089143" size="0.2965132 0.6 0.14910857" material="groundplane"/>
+      <geom name="cross_lane_0_3_ground_10" type="box" pos="-0.72855848 -3.65412392 -0.45747823" size="0.32855848 0.6 0.14252177" material="groundplane"/>
+      <!-- Platforms 1 and 4, difficulty 1.0. -->
+      <site name="L1.0  side 20.0cm  gap 17.8-45.9cm" pos="-1.8775 0 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_1_4_stone_1" type="box" pos="-2.84388579 -0.11609529 -0.26058359" size="0.1 0.1 0.23941641" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_2" type="box" pos="-3.04152341 0.11609529 -0.26058359" size="0.1 0.1 0.23941641" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_3" type="box" pos="-2.39267176 -0.11364991 -0.26500459" size="0.1 0.1 0.23499541" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_4" type="box" pos="-2.54495575 0.11364991 -0.26500459" size="0.1 0.1 0.23499541" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_5" type="box" pos="-1.84288344 -0.10014725 -0.24175746" size="0.1 0.1 0.25824254" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_6" type="box" pos="-2.01056143 0.10014725 -0.24175746" size="0.1 0.1 0.25824254" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_7" type="box" pos="-1.34476638 -0.11410331 -0.25205421" size="0.1 0.1 0.24794579" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_8" type="box" pos="-1.60515208 0.11410331 -0.25205421" size="0.1 0.1 0.24794579" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_9" type="box" pos="-0.96637701 -0.11137482 -0.2692735" size="0.1 0.1 0.2307265" material="stones_material"/>
+      <geom name="cross_lane_1_4_stone_10" type="box" pos="-0.94598541 0.11137482 -0.2692735" size="0.1 0.1 0.2307265" material="stones_material"/>
+      <geom name="cross_lane_1_4_ground_1" type="box" pos="-2.96663939 -0.11609529 -0.51501861" size="0.38836061 0.6 0.08498139" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_2" type="box" pos="-2.36802819 -0.11364991 -0.50392475" size="0.29025059 0.6 0.09607525" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_3" type="box" pos="-1.85580125 -0.10014725 -0.44337607" size="0.30197634 0.6 0.15662393" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_4" type="box" pos="-1.3746983 -0.11410331 -0.52591794" size="0.25912661 0.6 0.07408206" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_5" type="box" pos="-0.84778585 -0.11137482 -0.51991099" size="0.34778585 0.6 0.08008901" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_6" type="box" pos="-3.05411979 0.11609529 -0.52013549" size="0.30088021 0.6 0.07986451" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_7" type="box" pos="-2.53549909 0.11364991 -0.45442034" size="0.29774049 0.6 0.14557966" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_8" type="box" pos="-2.04280767 0.10014725 -0.44000459" size="0.27495092 0.6 0.15999541" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_9" type="box" pos="-1.54171275 0.11410331 -0.54109412" size="0.30614401 0.6 0.05890588" material="groundplane"/>
+      <geom name="cross_lane_1_4_ground_10" type="box" pos="-0.90778437 0.11137482 -0.48630805" size="0.40778437 0.6 0.11369195" material="groundplane"/>
+      <!-- Platforms 2 and 5, difficulty 1.0. -->
+      <site name="L1.0  side 20.0cm  gap 21.5-42.5cm" pos="-1.8775 3.755 0.08" size="0.0005" group="2"/>
+      <geom name="cross_lane_2_5_stone_1" type="box" pos="-3.02860843 3.64163194 -0.24673819" size="0.1 0.1 0.25326181" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_2" type="box" pos="-2.99885172 3.86836806 -0.24673819" size="0.1 0.1 0.25326181" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_3" type="box" pos="-2.45853971 3.63970002 -0.24732103" size="0.1 0.1 0.25267897" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_4" type="box" pos="-2.4453289 3.87029998 -0.24732103" size="0.1 0.1 0.25267897" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_5" type="box" pos="-2.04400572 3.64381586 -0.27345911" size="0.1 0.1 0.22654089" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_6" type="box" pos="-1.82061512 3.86618414 -0.27345911" size="0.1 0.1 0.22654089" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_7" type="box" pos="-1.55033546 3.64626565 -0.25457357" size="0.1 0.1 0.24542643" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_8" type="box" pos="-1.30682682 3.86373435 -0.25457357" size="0.1 0.1 0.24542643" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_9" type="box" pos="-0.94858656 3.63793194 -0.27208486" size="0.1 0.1 0.22791514" material="stones_material"/>
+      <geom name="cross_lane_2_5_stone_10" type="box" pos="-0.85397906 3.87206806 -0.27208486" size="0.1 0.1 0.22791514" material="stones_material"/>
+      <geom name="cross_lane_2_5_ground_1" type="box" pos="-3.02928704 3.64163194 -0.46033842" size="0.32571296 0.6 0.13966158" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_2" type="box" pos="-2.49742339 3.63970002 -0.48470294" size="0.28615068 0.6 0.11529706" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_3" type="box" pos="-2.02422165 3.64381586 -0.51576693" size="0.26705106 0.6 0.08423307" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_4" type="box" pos="-1.5233158 3.64626565 -0.54465587" size="0.31385479 0.6 0.05534413" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_5" type="box" pos="-0.8447305 3.63793194 -0.47656452" size="0.4447305 0.6 0.12343548" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_6" type="box" pos="-3.01854516 3.86836806 -0.54035579" size="0.33645484 0.6 0.05964421" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_7" type="box" pos="-2.42753116 3.87029998 -0.44845911" size="0.33455915 0.6 0.15154089" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_8" type="box" pos="-1.84834649 3.86618414 -0.50483441" size="0.32462552 0.6 0.09516559" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_9" type="box" pos="-1.32206196 3.86373435 -0.50592093" size="0.28165901 0.6 0.09407907" material="groundplane"/>
+      <geom name="cross_lane_2_5_ground_10" type="box" pos="-0.76020147 3.87206806 -0.45798331" size="0.36020147 0.6 0.14201669" material="groundplane"/>
+    </body>
+  </worldbody>
+</mujoco>
