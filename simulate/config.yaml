@@ -1,11 +1,12 @@
 # Scene under unitree_robots/go2/; absolute scene paths are also supported.
 # Support scenes with *.xml:
-#   flat, stairs, cross_stairs, cross_slope,
-#   race_track, racing, four_platforms, rough_flat, wheel, obstacles.
+#   flat, stairs, cross_stairs, cross_slope, mixed,
+#   race_track, racing, climb, rough_flat, wheel, obstacles, stones, gap.
 robot_scene: "stairs.xml"
 
 domain_id: 0
 interface: "lo"
+motor_torque_scale: 1.0 # Fraction of each motor's torque after clipping; 1.0 gives full output.
 
 use_joystick: 1
 joystick_type: "xbox" # "xbox" or "switch"
@@ -14,3 +15,37 @@ joystick_bits: 16
 
 print_scene_information: 1
 show_base_velocity: 1 # Base x/y and yaw velocity in the viewer.
+policy_height_map: true # Publish relative elevation and missing mask at 50 Hz over DDS.
+forward_elevation: false # Select 9x11 instead of 17x11; independent of the forward shift below.
+shift_elevation_forward: true # Enable the configured forward offset.
+elevation_forward_offset: 0.3 # Metres; matches the v0.3.1 four-skill model.
+show_policy_height_map: true # Full-map samples, or the camera mode's debug layers.
+
+# Isaac Lab camera observation; disabled keeps the full-terrain sampler.
+# When enabled, debug layers and training augmentations are on by default.
+camera_height_map:
+  enabled: false
+  debug: true
+  training_augmentation: true
+  seed: 42
+  camera_position: [0.315264242, 0.000000004, 0.101813775]
+  camera_mount_rpy: [0, 0, 0] # Radians, followed by the pitch correction below.
+  camera_pitch_deg: 32
+  horizontal_fov_deg: 89
+  vertical_fov_deg: 58
+  depth_range: [0.16, 2.0]
+  camera_fps: 15
+  cache_size: 50
+  resolution: 0.1
+  reference_height: 0.35
+  debug_interval: 5 # Refresh debug geometry every 5 training control steps (0.1 s).
+  noise_std: 0.01
+  bias_range: 0.01
+  drift_range: 0.03
+  correlated_noise_std: 0.01
+  tilt_range: 0.03
+  dropout_probability: 0.02
+  outlier_probability: 0.01
+  max_delay_steps: 4 # Sample 1-4 camera frames per reset; 0 disables delay.
+  full_visibility_probability: 0.1 # Training's full-view episodes.
+  height_clip: null # Matches the current four-skill export.

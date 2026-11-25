@@ -1,0 +1,58 @@
+<mujoco model="go2 gap terrain">
+  <include file="go2.xml"/>
+
+  <!-- Six increasing gaps, 0.5 to 1.0 m, with 1.5 m resting platforms.
+       The first platform is centred at the origin, with its top at Z=0.
+       Go2 starts on this platform facing +X; the ground is at Z=-2.00 m.
+       Both stairs connect ground level to the raised surface. -->
+  <statistic center="6.75 0 -1" extent="14"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-130" elevation="-40"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge"
+             rgb1="0.20 0.25 0.30" rgb2="0.10 0.13 0.16" markrgb="0.8 0.8 0.8"
+             width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0"/>
+    <material name="stairs_material" rgba="0.20 0.45 0.80 1"/>
+    <material name="gap_material" rgba="0.65 0.30 0.65 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="10 0 6" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" pos="0 0 -2" size="0 0 0.05" material="groundplane"/>
+    <body name="gap_terrain" pos="6.75 0 -2">
+      <!-- Standalone 2 m platforms; local Z=2 is world Z=0. -->
+      <!-- Every resting platform is 1.5 m long and 2 m wide. -->
+      <geom name="gap_platform_1" type="box" pos="-6.75 0 1" size="0.75 1 1" material="gap_material"/>
+      <site name="Gap 1: 0.5m" pos="-5.75 0 2.003" size="0.0005" group="2"/>
+      <geom name="gap_platform_2" type="box" pos="-4.75 0 1" size="0.75 1 1" material="gap_material"/>
+      <site name="Gap 2: 0.6m" pos="-3.7 0 2.003" size="0.0005" group="2"/>
+      <geom name="gap_platform_3" type="box" pos="-2.65 0 1" size="0.75 1 1" material="gap_material"/>
+      <site name="Gap 3: 0.7m" pos="-1.55 0 2.003" size="0.0005" group="2"/>
+      <geom name="gap_platform_4" type="box" pos="-0.45 0 1" size="0.75 1 1" material="gap_material"/>
+      <site name="Gap 4: 0.8m" pos="0.7 0 2.003" size="0.0005" group="2"/>
+      <geom name="gap_platform_5" type="box" pos="1.85 0 1" size="0.75 1 1" material="gap_material"/>
+      <site name="Gap 5: 0.9m" pos="3.05 0 2.003" size="0.0005" group="2"/>
+      <geom name="gap_platform_6" type="box" pos="4.25 0 1" size="0.75 1 1" material="gap_material"/>
+      <site name="Gap 6: 1.0m" pos="5.5 0 2.003" size="0.0005" group="2"/>
+      <geom name="gap_platform_7" type="box" pos="6.75 0 1" size="0.75 1 1" material="gap_material"/>
+
+      <!-- 19 treads plus the platform give twenty 10 cm rises.
+           Constant-height boxes extend below the ground plane. -->
+      <replicate count="19" offset="0.3 0 0.1">
+        <geom name="gap_entry_step" type="box" pos="-13.05 0 -0.85"
+              size="0.15 0.75 0.95" material="stairs_material"/>
+      </replicate>
+      <replicate count="19" offset="0.3 0 -0.1">
+        <geom name="gap_exit_step" type="box" pos="7.65 0 0.95"
+              size="0.15 0.75 0.95" material="stairs_material"/>
+      </replicate>
+    </body>
+  </worldbody>
+</mujoco>

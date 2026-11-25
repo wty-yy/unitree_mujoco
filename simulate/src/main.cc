@@ -30,6 +30,8 @@
 #include "simulate.h"
 #include "array_safety.h"
 #include "unitree_sdk2_bridge.h"
+#include "policy_height_map.h"
+#include "policy_selection.h"
 #include "param.h"
 
 #define MUJOCO_PLUGIN_DIR "mujoco_plugin"
@@ -288,8 +290,8 @@ namespace
     return mnew;
   }
 
-  // publish the base x/y/yaw velocity as viewer overlay text
-  void UpdateBaseVelocityOverlay(mj::Simulate &sim, const mjModel *m, const mjData *d)
+  // Return the base x/y/yaw velocity text for the viewer overlay.
+  std::string BaseVelocityOverlayText(const mjModel *m, const mjData *d)
   {
     // locate the floating base: the first free joint in the kinematic tree
     int free_joint = -1;
@@ -303,7 +305,7 @@ namespace
     }
     if (free_joint < 0)
     {
-      return;
+      return {};
     }
 
     const int qpos_adr = m->jnt_qposadr[free_joint];
@@ -328,14 +330,30 @@ namespace
                   "Base velocity (body frame)\nvx: %+7.3f m/s\nvy: %+7.3f m/s\nyaw rate: %+7.3f rad/s",
                   vx, vy, wz);
 
+    return text;
+  }
+
+  void UpdateViewerOverlay(mj::Simulate &sim, const mjModel *m, const mjData *d,
+                           const PolicySelectionSubscriber &selection, const PolicyHeightMapPublisher* height_map)
+  {
+    std::string text = selection.overlay_text();
+    if (param::config.show_base_velocity == 1) {
+      if (!text.empty()) text += "\n\n";
+      text += BaseVelocityOverlayText(m, d);
+    }
     sim.user_texts_new_.clear();
-    sim.user_texts_new_.emplace_back(mjFONT_NORMAL, mjGRID_TOPLEFT, text, "");
+    if (!text.empty()) sim.user_texts_new_.emplace_back(mjFONT_NORMAL, mjGRID_TOPLEFT, text, "");
+    if (height_map && param::config.show_policy_height_map && !height_map->overlay_text().empty())
+      sim.user_texts_new_.emplace_back(mjFONT_NORMAL, mjGRID_TOPRIGHT, height_map->overlay_text(), "");
     sim.newtextrequest.store(1);
   }
 
   // simulate in background thread (while rendering in main thread)
   void PhysicsLoop(mj::Simulate &sim)
   {
+    PolicySelectionSubscriber policy_selection;
+    std::unique_ptr<PolicyHeightMapPublisher> height_map;
+    const mjModel* height_map_model = nullptr;
     // cpu-sim syncronization point
     std::chrono::time_point<mj::Simulate::Clock> syncCPU;
     mjtNum syncSim = 0;
@@ -426,6 +444,12 @@ namespace
         // run only if model is present
         if (m)
         {
+          if (param::config.policy_height_map && height_map_model != m) {
+            height_map = std::make_unique<PolicyHeightMapPublisher>(m, param::config.forward_elevation, param::config.shift_elevation_forward, param::config.elevation_forward_offset, param::config.camera_height_map);
+            height_map_model = m;
+            sim.user_scn_geoms_.clear();
+          }
+          if (!height_map || !param::config.show_policy_height_map) sim.user_scn_geoms_.clear();
           // running
           if (sim.run)
           {
@@ -511,6 +535,9 @@ namespace
             // save current state to history buffer
             if (stepped)
             {
+              if (height_map && height_map->update(d) && param::config.show_policy_height_map) {
+                sim.user_scn_geoms_ = height_map->visualization_geoms();
+              }
               sim.AddToHistory();
             }
           }
@@ -520,18 +547,18 @@ namespace
           {
             // run mj_forward, to update rendering and joint sliders
             mj_forward(m, d);
+            if (height_map && height_map->update(d) && param::config.show_policy_height_map) {
+              sim.user_scn_geoms_ = height_map->visualization_geoms();
+            }
             sim.speed_changed = true;
           }
 
-          // refresh the base velocity overlay at a fixed rate
-          if (param::config.show_base_velocity == 1)
+          // Refresh even without velocity text so stale selection data disappears.
+          const auto now = mj::Simulate::Clock::now();
+          if (now - last_velocity_overlay_update >= Seconds(0.1))
           {
-            const auto now = mj::Simulate::Clock::now();
-            if (now - last_velocity_overlay_update >= Seconds(0.1))
-            {
-              UpdateBaseVelocityOverlay(sim, m, d);
-              last_velocity_overlay_update = now;
-            }
+            UpdateViewerOverlay(sim, m, d, policy_selection, height_map.get());
+            last_velocity_overlay_update = now;
           }
         }
       } // release std::lock_guard<std::mutex>
@@ -599,8 +626,6 @@ void UnitreeSdk2BridgeThread()
     usleep(500000);
   }
 
-  unitree::robot::ChannelFactory::Instance()->Init(param::config.domain_id, param::config.interface);
-
   Go2Bridge interface(m, d);
   interface.start();
 
@@ -619,6 +644,75 @@ __attribute__((used, visibility("default"))) extern "C" void _mj_rosettaError(co
 {
   rosetta_error_msg = msg;
 }
+#endif
+
+#ifdef __linux__
+// On Linux/NVIDIA X11, GLX swap_control pipelines SwapBuffers across frames.
+// When a concurrent CUDA/TensorRT context shares the GPU, the next frame's
+// mjui_render() (mjr_blitAux -> FBO 0) can block for a full VBlank (~16 ms)
+// waiting for the previous swap, followed by another VBlank wait in
+// SwapBuffers() (33 ms double-VSync stutter). Disabling GLX swap_control,
+// draining the frame with mjr_finish() (~0.3 ms without VBlank wait), and
+// pacing with steady_clock preserves smooth 60 Hz rendering at lower CPU load.
+class PacedGlfwAdapter : public mujoco::GlfwAdapter
+{
+public:
+  explicit PacedGlfwAdapter(double target_fps = 60.0)
+      : frame_period_(std::chrono::duration_cast<Clock::duration>(
+            std::chrono::duration<double>(1.0 / target_fps)))
+  {
+  }
+
+  void SetVSync(bool enabled) override
+  {
+    if (use_driver_vsync_)
+    {
+      mujoco::GlfwAdapter::SetVSync(enabled);
+      return;
+    }
+    mujoco::GlfwAdapter::SetVSync(false);
+    paced_ = enabled;
+    next_frame_ = Clock::time_point{};
+  }
+
+  void SwapBuffers() override
+  {
+    if (!paced_)
+    {
+      mujoco::GlfwAdapter::SwapBuffers();
+      return;
+    }
+    // Drain GPU work (~0.3 ms without VBlank wait) and sleep until the exact
+    // frame deadline before presenting so SwapBuffers cadence stays steady
+    // even when render/UI time varies by a few milliseconds.
+    mjr_finish();
+    const auto now = Clock::now();
+    if (next_frame_ == Clock::time_point{} || now > next_frame_ + frame_period_)
+    {
+      next_frame_ = now + frame_period_;
+    }
+    else
+    {
+      std::this_thread::sleep_until(next_frame_);
+      next_frame_ += frame_period_;
+    }
+    mujoco::GlfwAdapter::SwapBuffers();
+  }
+
+private:
+  using Clock = std::chrono::steady_clock;
+
+  static bool DriverVsyncRequested()
+  {
+    const char *env = std::getenv("UNITREE_MUJOCO_GLX_VSYNC");
+    return env && env[0] == '1';
+  }
+
+  bool use_driver_vsync_ = DriverVsyncRequested();
+  bool paced_ = false;
+  Clock::duration frame_period_;
+  Clock::time_point next_frame_{};
+};
 #endif
 
 // run event loop
@@ -660,9 +754,36 @@ int main(int argc, char **argv)
   if(param::config.robot_scene.is_relative()) {
     param::config.robot_scene = proj_dir.parent_path() / "unitree_robots" / "go2" / param::config.robot_scene;
   }
+  if (param::config.no_joystick) param::config.use_joystick = 0;
+  unitree::robot::ChannelFactory::Instance()->Init(param::config.domain_id, param::config.interface);
+  if (param::config.headless) {
+    char error[1024] = {};
+    std::unique_ptr<mjModel, decltype(&mj_deleteModel)> model(
+        mj_loadXML(param::config.robot_scene.c_str(), nullptr, error, sizeof(error)), mj_deleteModel);
+    if (!model) { std::cerr << error << std::endl; return 1; }
+    std::unique_ptr<mjData, decltype(&mj_deleteData)> data(mj_makeData(model.get()), mj_deleteData);
+    mj_forward(model.get(), data.get());
+    Go2Bridge bridge(model.get(), data.get());
+    std::unique_ptr<PolicyHeightMapPublisher> height_map;
+    if (param::config.policy_height_map) height_map = std::make_unique<PolicyHeightMapPublisher>(model.get(), param::config.forward_elevation, param::config.shift_elevation_forward, param::config.elevation_forward_offset, param::config.camera_height_map);
+    const auto start = std::chrono::steady_clock::now();
+    while (param::config.duration <= 0 || data->time < param::config.duration) {
+      bridge.run();
+      mj_step(model.get(), data.get());
+      if (height_map) height_map->update(data.get());
+      std::this_thread::sleep_until(start + std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+          std::chrono::duration<double>(data->time)));
+    }
+    std::cout << "Headless simulation completed: " << data->time << " s, base z=" << data->qpos[2] << std::endl;
+    return 0;
+  }
   // simulate object encapsulates the UI
   auto sim = std::make_unique<mj::Simulate>(
+#ifdef __linux__
+    std::make_unique<PacedGlfwAdapter>(),
+#else
     std::make_unique<mj::GlfwAdapter>(),
+#endif
     &cam, &opt, &pert, /* is_passive = */ false);
 
   std::thread unitree_thread(UnitreeSdk2BridgeThread);

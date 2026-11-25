@@ -72,7 +72,9 @@ The default configuration requires a gamepad connected to the host. Test gamepad
 - `-n`, `--network`: DDS network interface; overrides `interface`, default `lo`
 - `-h`, `--help`: Show command-line help and exit
 
-Available scenes: `scene.xml`, `scene_terrain.xml`, `flat.xml`, `stairs.xml`, `cross_stairs.xml`, `cross_slope.xml`, `race_track.xml`, `racing.xml`, `four_platforms.xml`, `rough_flat.xml`, `wheel.xml`, and `obstacles.xml`.
+`--hip-torque-scale` (hip abduction), `--thigh-torque-scale` (thigh pitch), and `--calf-torque-scale` (knee) each apply to all four legs. Each accepts 0 to 1 and defaults to 1. The bridge multiplies clipped torque by both the configured `motor_torque_scale` and the joint multiplier. For example, `./simulate/build/unitree_mujoco -s flat.xml --calf-torque-scale 0.8` runs all four knees at 80% of the global setting.
+
+Available scenes: `scene.xml`, `scene_terrain.xml`, `flat.xml`, `stairs.xml`, `cross_stairs.xml`, `cross_slope.xml`, `race_track.xml`, `racing.xml`, `climb.xml`, `rough_flat.xml`, `wheel.xml`, and `obstacles.xml`.
 
 Additional settings in [`simulate/config.yaml`](simulate/config.yaml):
 
@@ -84,6 +86,10 @@ Additional settings in [`simulate/config.yaml`](simulate/config.yaml):
 - `show_base_velocity`: Display base x/y and yaw velocity with `1` (default); disable with `0`
 
 After starting the simulator, follow the instructions in [wty-yy/unitree_cpp_deploy's go2 branch](https://github.com/wty-yy/unitree_cpp_deploy/tree/go2) to launch the locomotion controller.
+
+### Router policy selection overlay
+
+When a matching controller publishes DDS topic `rt/go2/policy_selection`, the viewer automatically shows `Selected policy: 2 (stairs)` at the top left, above the existing base-velocity text. No extra display switch is required, and this works even with `show_base_velocity: 0`. The topic uses `std_msgs::msg::dds_::String_` with JSON payload `{"active":true,"selected_id":2,"selected_name":"stairs"}`. It displays nothing before data arrives, hides the selection after 0.5 seconds without updates, and clears on `{"active":false}`. The viewer refreshes this overlay every 0.1 seconds. Use the same DDS domain and network interface as the controller; policy IDs and names are supplied by the controller's exported router contract.
 
 ## Code Structure
 
@@ -101,3 +107,9 @@ unitree_mujoco/
 ## License
 
 Original code in this repository is licensed under the [MIT License](LICENSE). Code derived from Unitree MuJoCo retains the BSD 3-Clause License included in the same file. Third-party code retains its respective licenses.
+
+## Policy elevation grid
+
+`simulate/config.yaml` enables `shift_elevation_forward: true` by default. This shifts ray sampling, green visualization points and both DDS channel origins by `elevation_forward_offset` (default 0.3 m) along base yaw: the full 17×11 grid covers x=[-0.5,1.1] m and y=[-0.5,0.5] m, at 0.1 m resolution. Set it to `false` (or pass `--shift-elevation-forward false`) for older centered policies. `forward_elevation` independently selects a 9×11 grid: x=[0.3,1.1] m with the default shift, or [0,0.8] m otherwise. Match this setting to the policy training configuration; dimensions and data ordering do not change. The paired C++ deploy receiver supports both origins.
+
+The optional `elevation_forward_offset` value (CLI `--elevation-forward-offset`) sets the distance in metres when shifting is enabled; its default is 0.3. Use 0.5 for older policies trained with a 0.5 m shift. The v0.3.1 four-skill policy requires 0.3, giving x=[-0.5,1.1] m for a 17×11 map. Its deploy.yaml records `height_map.forward_offset: 0.3`, and the receiver rejects a different origin. Set the simulator to match the selected model; changing the distance does not change array order or dimensions.

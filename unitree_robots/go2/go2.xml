@@ -103,6 +103,13 @@
               type="cylinder" class="collision" />
             <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0"
               type="cylinder" class="collision" />
+            <!-- URDF calflower1 and rear gap filler, expressed in the calf frame. -->
+            <geom name="FL_calflower1_collision" size="0.0155 0.015"
+              pos="0.008013330625 0 -0.187450218723" quat="0.965092500881 0 0.261909268150 0"
+              type="cylinder" class="collision" />
+            <geom name="FL_calflower1_rear_collision" size="0.0115 0.017"
+              pos="0.011134035779 0 -0.174211593442" quat="0.965092500881 0 0.261909268150 0"
+              type="cylinder" class="collision" />
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black" />
             <geom name="FL" class="foot" />
             <body name="FL_foot" pos="0 0 -0.213" />
@@ -138,6 +145,12 @@
               type="cylinder" class="collision" />
             <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0"
               type="cylinder" class="collision" />
+            <geom name="FR_calflower1_collision" size="0.0155 0.015"
+              pos="0.008013330625 0 -0.187450218723" quat="0.965092500881 0 0.261909268150 0"
+              type="cylinder" class="collision" />
+            <geom name="FR_calflower1_rear_collision" size="0.0115 0.017"
+              pos="0.011134035779 0 -0.174211593442" quat="0.965092500881 0 0.261909268150 0"
+              type="cylinder" class="collision" />
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black" />
             <geom name="FR" class="foot" />
             <body name="FR_foot" pos="0 0 -0.213" />
@@ -172,6 +185,12 @@
             <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0"
               type="cylinder" class="collision" />
             <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0"
+              type="cylinder" class="collision" />
+            <geom name="RL_calflower1_collision" size="0.0155 0.015"
+              pos="0.008013330625 0 -0.187450218723" quat="0.965092500881 0 0.261909268150 0"
+              type="cylinder" class="collision" />
+            <geom name="RL_calflower1_rear_collision" size="0.0115 0.017"
+              pos="0.011134035779 0 -0.174211593442" quat="0.965092500881 0 0.261909268150 0"
               type="cylinder" class="collision" />
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black" />
             <geom name="RL" class="foot" />
@@ -209,6 +228,12 @@
             <geom size="0.013 0.06" pos="0.01 0 -0.06" quat="0.995004 0 -0.0998334 0"
               type="cylinder" class="collision" />
             <geom size="0.011 0.0325" pos="0.02 0 -0.148" quat="0.999688 0 0.0249974 0"
+              type="cylinder" class="collision" />
+            <geom name="RR_calflower1_collision" size="0.0155 0.015"
+              pos="0.008013330625 0 -0.187450218723" quat="0.965092500881 0 0.261909268150 0"
+              type="cylinder" class="collision" />
+            <geom name="RR_calflower1_rear_collision" size="0.0115 0.017"
+              pos="0.011134035779 0 -0.174211593442" quat="0.965092500881 0 0.261909268150 0"
               type="cylinder" class="collision" />
             <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black" />
             <geom name="RR" class="foot" />

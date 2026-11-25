@@ -72,7 +72,9 @@ cmake --build simulate/build -j$(nproc)
 - `-n`、`--network`：DDS 网络接口，覆盖 `interface`，默认 `lo`
 - `-h`、`--help`：显示命令行帮助并退出
 
-可用场景：`scene.xml`、`scene_terrain.xml`、`flat.xml`、`stairs.xml`、`cross_stairs.xml`、`cross_slope.xml`、`race_track.xml`、`racing.xml`、`four_platforms.xml`、`rough_flat.xml`、`wheel.xml` 和 `obstacles.xml`
+`--hip-torque-scale`（髋外展）、`--thigh-torque-scale`（大腿俯仰）和 `--calf-torque-scale`（膝）分别调节四条腿的同类关节。每项范围为 0 到 1，默认 1。输出力矩限幅后乘以配置中的 `motor_torque_scale` 和该关节的倍率。例如，`./simulate/build/unitree_mujoco -s flat.xml --calf-torque-scale 0.8` 将四个膝关节的输出调至全局设置的 80%。
+
+可用场景：`scene.xml`、`scene_terrain.xml`、`flat.xml`、`stairs.xml`、`cross_stairs.xml`、`cross_slope.xml`、`race_track.xml`、`racing.xml`、`climb.xml`、`rough_flat.xml`、`wheel.xml` 和 `obstacles.xml`
 
 更多配置通过 [`simulate/config.yaml`](simulate/config.yaml) 设置：
 
@@ -84,6 +86,10 @@ cmake --build simulate/build -j$(nproc)
 - `show_base_velocity`：`1` 显示机身 x/y 速度与偏航角速度（默认），`0` 关闭
 
 仿真启动后，按 [wty-yy/unitree_cpp_deploy 的 go2 分支](https://github.com/wty-yy/unitree_cpp_deploy/tree/go2) 中的说明启动运控程序。
+
+### Router 策略选择显示
+
+配套控制器发布 DDS 通道 `rt/go2/policy_selection` 后，界面左上角会自动显示 `Selected policy: 2 (stairs)`，位于原有机身速度文字上方，无需额外开关，`show_base_velocity: 0` 时也可显示。消息类型为 `std_msgs::msg::dds_::String_`，JSON 内容示例为 `{"active":true,"selected_id":2,"selected_name":"stairs"}`。没有收到数据时不显示，超过 0.5 秒没有更新后隐藏，收到 `{"active":false}` 时清空；界面每 0.1 秒刷新一次。请与控制器使用相同的 DDS 域和网络接口，策略 ID 和名称由控制器的 router 导出配置提供。
 
 ## 代码框架
 
@@ -101,3 +107,9 @@ unitree_mujoco/
 ## 许可证
 
 本仓库原创代码采用 [MIT License](LICENSE)。源自 Unitree MuJoCo 的代码保留 BSD 3-Clause License，详见同一文件。第三方代码遵循各自的许可证。
+
+## 策略高程图
+
+`simulate/config.yaml` 默认启用 `shift_elevation_forward: true`，将射线采样、绿色可视化点和两个 DDS 通道的原点沿机器人 yaw 朝向前移 `elevation_forward_offset`（默认 0.3 m）。完整 17×11 网格范围为 x=[-0.5,1.1] m、y=[-0.5,0.5] m，分辨率为 0.1 m。旧版居中策略设为 `false`，或使用 `--shift-elevation-forward false`。`forward_elevation` 独立选择 9×11 网格：默认前移时 x=[0.3,1.1] m，否则为 [0,0.8] m。请与策略训练配置保持一致；网格维度和数据顺序不变。配套 C++ deploy 接收端兼容两种原点。
+
+可选的 `elevation_forward_offset`（命令行 `--elevation-forward-offset`）指定开启前移时的距离，单位米，默认为 0.3。训练时前移 0.5 m 的旧策略请设为 0.5。v0.3.1 四技能策略要求 0.3，对应 17×11 网格 x=[-0.5,1.1] m。其 deploy.yaml 记录 `height_map.forward_offset: 0.3`，接收端会拒绝不匹配的原点。请按当前策略设置模拟器距离；修改距离不会改变数组顺序或维度。

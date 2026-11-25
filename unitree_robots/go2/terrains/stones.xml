@@ -1,0 +1,55 @@
+<mujocoinclude>
+  <!--
+    Compact 2 m wide corridor, traversed along +X.
+    Four columns across Y and eight rows along X, 32 square stepping stones.
+    Pillars retain the stones-inherit hard dimensions: width 0.32 m,
+    pitch 0.48 m, top 0.50 +/- 0.015 m (NumPy seed 42), bottom Z=0.
+    Alternate columns are staggered by 0.24 m along X.
+    The stone field spans X=[-1.96, 1.96], Y=[-0.88, 0.88].
+    Entry and exit landings are each 1.50 m long, 2 m wide and 0.50 m high.
+  -->
+  <geom name="stones_pillar_r1_c1" type="box" pos="-1.8 -0.72 0.254109341" size="0.16 0.16 0.254109341" material="stones_material"/>
+  <geom name="stones_pillar_r1_c2" type="box" pos="-1.56 -0.24 0.249083177" size="0.16 0.16 0.249083177" material="stones_material"/>
+  <geom name="stones_pillar_r1_c3" type="box" pos="-1.8 0.24 0.255378969" size="0.16 0.16 0.255378969" material="stones_material"/>
+  <geom name="stones_pillar_r1_c4" type="box" pos="-1.56 0.72 0.25296052" size="0.16 0.16 0.25296052" material="stones_material"/>
+  <geom name="stones_pillar_r2_c1" type="box" pos="-1.32 -0.72 0.24391266" size="0.16 0.16 0.24391266" material="stones_material"/>
+  <geom name="stones_pillar_r2_c2" type="box" pos="-1.08 -0.24 0.257134335" size="0.16 0.16 0.257134335" material="stones_material"/>
+  <geom name="stones_pillar_r2_c3" type="box" pos="-1.32 0.24 0.253917096" size="0.16 0.16 0.253917096" material="stones_material"/>
+  <geom name="stones_pillar_r2_c4" type="box" pos="-1.08 0.72 0.254290965" size="0.16 0.16 0.254290965" material="stones_material"/>
+  <geom name="stones_pillar_r3_c1" type="box" pos="-0.84 -0.72 0.244421704" size="0.16 0.16 0.244421704" material="stones_material"/>
+  <geom name="stones_pillar_r3_c2" type="box" pos="-0.6 -0.24 0.249255789" size="0.16 0.16 0.249255789" material="stones_material"/>
+  <geom name="stones_pillar_r3_c3" type="box" pos="-0.84 0.24 0.24806197" size="0.16 0.16 0.24806197" material="stones_material"/>
+  <geom name="stones_pillar_r3_c4" type="box" pos="-0.6 0.72 0.256401475" size="0.16 0.16 0.256401475" material="stones_material"/>
+  <geom name="stones_pillar_r4_c1" type="box" pos="-0.36 -0.72 0.252157977" size="0.16 0.16 0.252157977" material="stones_material"/>
+  <geom name="stones_pillar_r4_c2" type="box" pos="-0.12 -0.24 0.254841424" size="0.16 0.16 0.254841424" material="stones_material"/>
+  <geom name="stones_pillar_r4_c3" type="box" pos="-0.36 0.24 0.249151213" size="0.16 0.16 0.249151213" material="stones_material"/>
+  <geom name="stones_pillar_r4_c4" type="box" pos="-0.12 0.72 0.245908581" size="0.16 0.16 0.245908581" material="stones_material"/>
+  <geom name="stones_pillar_r5_c1" type="box" pos="0.12 -0.72 0.250818772" size="0.16 0.16 0.250818772" material="stones_material"/>
+  <geom name="stones_pillar_r5_c2" type="box" pos="0.36 -0.24 0.243457259" size="0.16 0.16 0.243457259" material="stones_material"/>
+  <geom name="stones_pillar_r5_c3" type="box" pos="0.12 0.24 0.254914468" size="0.16 0.16 0.254914468" material="stones_material"/>
+  <geom name="stones_pillar_r5_c4" type="box" pos="0.36 0.72 0.251974966" size="0.16 0.16 0.251974966" material="stones_material"/>
+  <geom name="stones_pillar_r6_c1" type="box" pos="0.6 -0.72 0.253871316" size="0.16 0.16 0.253871316" material="stones_material"/>
+  <geom name="stones_pillar_r6_c2" type="box" pos="0.84 -0.24 0.24781789" size="0.16 0.16 0.24781789" material="stones_material"/>
+  <geom name="stones_pillar_r6_c3" type="box" pos="0.6 0.24 0.25706047" size="0.16 0.16 0.25706047" material="stones_material"/>
+  <geom name="stones_pillar_r6_c4" type="box" pos="0.84 0.72 0.255896817" size="0.16 0.16 0.255896817" material="stones_material"/>
+  <geom name="stones_pillar_r7_c1" type="box" pos="1.08 -0.72 0.254175752" size="0.16 0.16 0.254175752" material="stones_material"/>
+  <geom name="stones_pillar_r7_c2" type="box" pos="1.32 -0.24 0.245419581" size="0.16 0.16 0.245419581" material="stones_material"/>
+  <geom name="stones_pillar_r7_c3" type="box" pos="1.08 0.24 0.249500815" size="0.16 0.16 0.249500815" material="stones_material"/>
+  <geom name="stones_pillar_r7_c4" type="box" pos="1.32 0.72 0.243157056" size="0.16 0.16 0.243157056" material="stones_material"/>
+  <geom name="stones_pillar_r8_c1" type="box" pos="1.56 -0.72 0.244814342" size="0.16 0.16 0.244814342" material="stones_material"/>
+  <geom name="stones_pillar_r8_c2" type="box" pos="1.8 -0.24 0.252745734" size="0.16 0.16 0.252745734" material="stones_material"/>
+  <geom name="stones_pillar_r8_c3" type="box" pos="1.56 0.24 0.253671432" size="0.16 0.16 0.253671432" material="stones_material"/>
+  <geom name="stones_pillar_r8_c4" type="box" pos="1.8 0.72 0.257012646" size="0.16 0.16 0.257012646" material="stones_material"/>
+  <geom name="stones_entry_landing" type="box" pos="-2.71 0 0.25" size="0.75 1 0.25" material="stones_material"/>
+  <geom name="stones_exit_landing" type="box" pos="2.71 0 0.25" size="0.75 1 0.25" material="stones_material"/>
+  <!-- Entry and exit stairs: 10 cm rises, 30 cm treads, 1.5 m width. -->
+  <geom name="stones_entry_step_1" type="box" pos="-4.51 0 0.05" size="0.15 0.75 0.05" material="stairs_material"/>
+  <geom name="stones_entry_step_2" type="box" pos="-4.21 0 0.1" size="0.15 0.75 0.1" material="stairs_material"/>
+  <geom name="stones_entry_step_3" type="box" pos="-3.91 0 0.15" size="0.15 0.75 0.15" material="stairs_material"/>
+  <geom name="stones_entry_step_4" type="box" pos="-3.61 0 0.2" size="0.15 0.75 0.2" material="stairs_material"/>
+  <geom name="stones_exit_step_1" type="box" pos="4.51 0 0.05" size="0.15 0.75 0.05" material="stairs_material"/>
+  <geom name="stones_exit_step_2" type="box" pos="4.21 0 0.1" size="0.15 0.75 0.1" material="stairs_material"/>
+  <geom name="stones_exit_step_3" type="box" pos="3.91 0 0.15" size="0.15 0.75 0.15" material="stairs_material"/>
+  <geom name="stones_exit_step_4" type="box" pos="3.61 0 0.2" size="0.15 0.75 0.2" material="stairs_material"/>
+  <site name="Stones: 4 columns x 8 rows, top 50cm" pos="-2.71 0 0.503" size="0.0005" group="2"/>
+</mujocoinclude>

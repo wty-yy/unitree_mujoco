@@ -7,6 +7,7 @@
 #include <unitree/dds_wrapper/robots/go2/go2.h>
 
 #include <iostream>
+#include <algorithm>
 
 #include "param.h"
 #include "physics_joystick.h"
@@ -126,6 +127,10 @@ using WirelessController_t = unitree::robot::go2::publisher::WirelessController;
 public:
     Go2Bridge(mjModel *model, mjData *data) : UnitreeSDK2BridgeBase(model, data)
     {
+        const auto& scales = param::config.joint_torque_scales;
+        std::cout << "Go2 motor torque scale: " << param::config.motor_torque_scale
+                  << " (joint multipliers: hip=" << scales[0] << ", thigh=" << scales[1]
+                  << ", calf=" << scales[2] << ")" << std::endl;
         lowcmd = std::make_shared<LowCmd_t>("rt/lowcmd");
         lowstate = std::make_unique<LowState_t>();
         lowstate->joystick = joystick;
@@ -149,9 +154,14 @@ public:
             std::lock_guard<std::mutex> lock(lowcmd->mutex_);
             for(int i(0); i<num_motor_; i++) {
                 auto & m = lowcmd->msg_.motor_cmd()[i];
-                mj_data_->ctrl[i] = m.tau() +
-                                    m.kp() * (m.q() - mj_data_->sensordata[i]) +
-                                    m.kd() * (m.dq() - mj_data_->sensordata[i + num_motor_]);
+                mjtNum torque = m.tau() + m.kp() * (m.q() - mj_data_->sensordata[i]) +
+                                m.kd() * (m.dq() - mj_data_->sensordata[i + num_motor_]);
+                if (mj_model_->actuator_ctrllimited[i] && !(mj_model_->opt.disableflags & mjDSBL_CLAMPCTRL)) {
+                    const auto* range = mj_model_->actuator_ctrlrange + 2 * i;
+                    torque = std::clamp(torque, range[0], range[1]);
+                }
+                const auto& scales = param::config.joint_torque_scales;
+                mj_data_->ctrl[i] = torque * param::config.motor_torque_scale * scales[i % scales.size()];
             }
         }
 
