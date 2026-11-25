@@ -1,0 +1,25 @@
+<mujoco>
+  <!--
+    Independent boxes on flat ground, approached along +X.
+    Four height levels share the mixed scene's X centres:
+      X=4.1 / 8.9 / 13.7 / 18.5 m, H=0.15 / 0.25 / 0.35 / 0.45 m.
+    All tops are 0.40 x 0.60 m, matching the small-box reproduction.
+    The parent body places this row at Y=-3 in climb.xml and Y=-9 in mixed.xml.
+    All dimensions above are full lengths; MJCF sizes below are half lengths.
+  -->
+  <geom name="climb_small_box_15cm" type="box" pos="4.1 0 0.075"
+        size="0.2 0.3 0.075" material="small_box_material" friction="0.8 0.02 0.01"/>
+  <site name="Small box 15cm, 40x60cm top" pos="4.1 0 0.153" size="0.0005" group="2"/>
+
+  <geom name="climb_small_box_25cm" type="box" pos="8.9 0 0.125"
+        size="0.2 0.3 0.125" material="small_box_material" friction="0.8 0.02 0.01"/>
+  <site name="Small box 25cm, 40x60cm top" pos="8.9 0 0.253" size="0.0005" group="2"/>
+
+  <geom name="climb_small_box_35cm" type="box" pos="13.7 0 0.175"
+        size="0.2 0.3 0.175" material="small_box_material" friction="0.8 0.02 0.01"/>
+  <site name="Small box 35cm, 40x60cm top" pos="13.7 0 0.353" size="0.0005" group="2"/>
+
+  <geom name="climb_small_box_45cm" type="box" pos="18.5 0 0.225"
+        size="0.2 0.3 0.225" material="small_box_material" friction="0.8 0.02 0.01"/>
+  <site name="Small box 45cm, 40x60cm top" pos="18.5 0 0.453" size="0.0005" group="2"/>
+</mujoco>

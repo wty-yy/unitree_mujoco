@@ -35,6 +35,7 @@
 #include "unitree_sdk2_bridge.h"
 #include "param.h"
 #include "model_loader.h"
+#include "policy_selection.h"
 
 #define MUJOCO_PLUGIN_DIR "mujoco_plugin"
 
@@ -324,10 +325,8 @@ namespace
     return mnew;
   }
 
-  // Publish floating-base velocities in the base frame, as in the Go2 viewer.
-  void UpdateBaseVelocityOverlay(mj::Simulate &sim, const mjModel *model, const mjData *data)
+  std::string BaseVelocityOverlayText(const mjModel *model, const mjData *data)
   {
-    sim.user_texts_new_.clear();
     for (int joint = 0; joint < model->njnt; ++joint)
     {
       if (model->jnt_type[joint] != mjJNT_FREE)
@@ -346,18 +345,33 @@ namespace
       std::snprintf(text, sizeof(text),
                     "Base velocity (body frame)\nvx: %+7.3f m/s\nvy: %+7.3f m/s\nwz: %+7.3f rad/s",
                     velocity[0], velocity[1], data->qvel[qvel_adr + 5]);
-      sim.user_texts_new_.emplace_back(mjFONT_NORMAL, mjGRID_TOPLEFT, text, "");
-      break;
+      return text;
     }
+    return {};
+  }
+
+  void UpdateViewerOverlay(mj::Simulate &sim, const mjModel *model, const mjData *data,
+                           const PolicySelectionSubscriber &selection)
+  {
+    std::string text = selection.overlay_text();
+    if (param::config.show_base_velocity == 1)
+    {
+      const auto velocity = BaseVelocityOverlayText(model, data);
+      if (!text.empty() && !velocity.empty()) text += "\n\n";
+      text += velocity;
+    }
+    sim.user_texts_new_.clear();
+    if (!text.empty()) sim.user_texts_new_.emplace_back(mjFONT_NORMAL, mjGRID_TOPLEFT, text, "");
     sim.newtextrequest.store(1);
   }
 
   // simulate in background thread (while rendering in main thread)
   void PhysicsLoop(mj::Simulate &sim)
   {
+    PolicySelectionSubscriber policy_selection;
     // cpu-sim syncronization point
     std::chrono::time_point<mj::Simulate::Clock> syncCPU;
-    std::chrono::time_point<mj::Simulate::Clock> last_velocity_overlay_update;
+    std::chrono::time_point<mj::Simulate::Clock> last_overlay_update;
     mjtNum syncSim = 0;
 
     // run until asked to exit
@@ -561,14 +575,11 @@ namespace
             sim.speed_changed = true;
           }
 
-          if (param::config.show_base_velocity == 1)
+          const auto now = mj::Simulate::Clock::now();
+          if (now - last_overlay_update >= Seconds(0.1))
           {
-            const auto now = mj::Simulate::Clock::now();
-            if (now - last_velocity_overlay_update >= Seconds(0.1))
-            {
-              UpdateBaseVelocityOverlay(sim, m, d);
-              last_velocity_overlay_update = now;
-            }
+            UpdateViewerOverlay(sim, m, d, policy_selection);
+            last_overlay_update = now;
           }
         }
       } // release std::lock_guard<std::mutex>
@@ -636,8 +647,6 @@ void *UnitreeSdk2BridgeThread(void *arg)
     usleep(500000);
   }
 
-  unitree::robot::ChannelFactory::Instance()->Init(param::config.domain_id, param::config.interface);
-
   param::config.band_attached_link = mj_name2id(m, mjOBJ_BODY, "torso_link");
 
   auto* sim = static_cast<mj::Simulate*>(arg);
@@ -659,6 +668,75 @@ __attribute__((used, visibility("default"))) extern "C" void _mj_rosettaError(co
 {
   rosetta_error_msg = msg;
 }
+#endif
+
+#ifdef __linux__
+// On Linux/NVIDIA X11, GLX swap_control pipelines SwapBuffers across frames.
+// When a concurrent CUDA/TensorRT context shares the GPU, the next frame's
+// mjui_render() (mjr_blitAux -> FBO 0) can block for a full VBlank (~16 ms)
+// waiting for the previous swap, followed by another VBlank wait in
+// SwapBuffers() (33 ms double-VSync stutter). Disabling GLX swap_control,
+// draining the frame with mjr_finish() (~0.3 ms without VBlank wait), and
+// pacing with steady_clock preserves smooth 60 Hz rendering at lower CPU load.
+class PacedGlfwAdapter : public mujoco::GlfwAdapter
+{
+public:
+  explicit PacedGlfwAdapter(double target_fps = 60.0)
+      : frame_period_(std::chrono::duration_cast<Clock::duration>(
+            std::chrono::duration<double>(1.0 / target_fps)))
+  {
+  }
+
+  void SetVSync(bool enabled) override
+  {
+    if (use_driver_vsync_)
+    {
+      mujoco::GlfwAdapter::SetVSync(enabled);
+      return;
+    }
+    mujoco::GlfwAdapter::SetVSync(false);
+    paced_ = enabled;
+    next_frame_ = Clock::time_point{};
+  }
+
+  void SwapBuffers() override
+  {
+    if (!paced_)
+    {
+      mujoco::GlfwAdapter::SwapBuffers();
+      return;
+    }
+    // Drain GPU work (~0.3 ms without VBlank wait) and sleep until the exact
+    // frame deadline before presenting so SwapBuffers cadence stays steady
+    // even when render/UI time varies by a few milliseconds.
+    mjr_finish();
+    const auto now = Clock::now();
+    if (next_frame_ == Clock::time_point{} || now > next_frame_ + frame_period_)
+    {
+      next_frame_ = now + frame_period_;
+    }
+    else
+    {
+      std::this_thread::sleep_until(next_frame_);
+      next_frame_ += frame_period_;
+    }
+    mujoco::GlfwAdapter::SwapBuffers();
+  }
+
+private:
+  using Clock = std::chrono::steady_clock;
+
+  static bool DriverVsyncRequested()
+  {
+    const char *env = std::getenv("UNITREE_MUJOCO_GLX_VSYNC");
+    return env && env[0] == '1';
+  }
+
+  bool use_driver_vsync_ = DriverVsyncRequested();
+  bool paced_ = false;
+  Clock::duration frame_period_;
+  Clock::time_point next_frame_{};
+};
 #endif
 
 // pointer to original GLFW key callback
@@ -737,8 +815,15 @@ int main(int argc, char **argv)
 
   // simulate object encapsulates the UI
   auto sim = std::make_unique<mj::Simulate>(
+#ifdef __linux__
+    std::make_unique<PacedGlfwAdapter>(),
+#else
     std::make_unique<mj::GlfwAdapter>(),
+#endif
     &cam, &opt, &pert, /* is_passive = */ false);
+
+  // Both the bridge and the physics loop create DDS channels.
+  unitree::robot::ChannelFactory::Instance()->Init(param::config.domain_id, param::config.interface);
 
   std::thread unitree_thread(UnitreeSdk2BridgeThread, sim.get());
 

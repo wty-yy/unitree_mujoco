@@ -25,10 +25,11 @@ inline std::vector<float> sampleHeightMap(const mjModel* model, const mjData* da
     const double c = std::cos(yaw), s = std::sin(yaw);
     const mjtNum direction[3] = {0, 0, -1};
     std::vector<float> heights(187, std::numeric_limits<float>::quiet_NaN());
-    // Only world-welded collision geometry is terrain; exclude all robot links.
+    // Sample world-welded collision geometry, excluding group 4 (the lab roof).
     std::vector<int> terrain;
     for (int g = 0; g < model->ngeom; ++g) {
         if (model->body_weldid[model->geom_bodyid[g]] == 0 &&
+            model->geom_group[g] != 4 &&
             (model->geom_contype[g] || model->geom_conaffinity[g])) terrain.push_back(g);
     }
     for (int x = 0; x < 17; ++x) {

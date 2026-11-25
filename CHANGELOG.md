@@ -1,5 +1,12 @@
 # UPDATE
 
+## v0.1.1 - 2026-11-25
+
+1. Add Linux `PacedGlfwAdapter` (`glfwSwapInterval(0)` + `mjr_finish()` + `steady_clock` 60 Hz frame pacing, with `UNITREE_MUJOCO_GLX_VSYNC=1` fallback) to eliminate NVIDIA X11 double-VSync visualization stutters when running alongside CUDA/TensorRT inference
+2. Add `PolicySelectionSubscriber` (`rt/g1/policy_selection`) to display the dominant MoE expert and per-expert weights in the viewer overlay, and synchronize overlay handoff under `Simulate::mtx` in `simulate_with_user_geoms.cc`
+3. Exclude display group `4` (lab roof) from policy height-map terrain raycasts in `simulate/src/height_map.h`
+4. Add `mixed.xml`, `stones.xml`, `gap.xml`, and `lab.xml` scenes with shared terrain includes under `unitree_robots/g1/terrains/` (`climb_boxes.xml`, `stones.xml`, `gap.xml`, `gap_rings.xml`, `gap_ring_meshes.xml`)
+
 ## v0.1 - 2026-11-13
 
 1. Replace the Mode 15 model with `g1_29dof_mode_15_unitree_model_collision.xml` and its matching URDF, providing 34 visual geometries and 33 collision geometries (`15` mesh, `10` sphere, `6` cylinder, `2` box) in display group `3`

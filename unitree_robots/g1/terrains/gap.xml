@@ -1,0 +1,33 @@
+<mujocoinclude>
+  <!--
+    Straight 2 m wide corridor with six gaps along +X, in increasing order:
+    0.50, 0.60, 0.70, 0.80, 0.90 and 1.00 m. Gap bottoms are at Z=0.
+    All seven raised platforms are 1.50 m long, 2 m wide and 0.60 m high.
+    The raised corridor spans X=[-7.5, 7.5]; stairs extend to +/-9 m.
+    Each site label marks the corresponding gap width; cycle F7 to show.
+  -->
+  <geom name="gap_platform_1" type="box" pos="-6.75 0 0.3" size="0.75 1 0.3" material="gap_material"/>
+  <site name="Gap 1: 0.5m" pos="-5.75 0 0.603" size="0.0005" group="2"/>
+  <geom name="gap_platform_2" type="box" pos="-4.75 0 0.3" size="0.75 1 0.3" material="gap_material"/>
+  <site name="Gap 2: 0.6m" pos="-3.7 0 0.603" size="0.0005" group="2"/>
+  <geom name="gap_platform_3" type="box" pos="-2.65 0 0.3" size="0.75 1 0.3" material="gap_material"/>
+  <site name="Gap 3: 0.7m" pos="-1.55 0 0.603" size="0.0005" group="2"/>
+  <geom name="gap_platform_4" type="box" pos="-0.45 0 0.3" size="0.75 1 0.3" material="gap_material"/>
+  <site name="Gap 4: 0.8m" pos="0.7 0 0.603" size="0.0005" group="2"/>
+  <geom name="gap_platform_5" type="box" pos="1.85 0 0.3" size="0.75 1 0.3" material="gap_material"/>
+  <site name="Gap 5: 0.9m" pos="3.05 0 0.603" size="0.0005" group="2"/>
+  <geom name="gap_platform_6" type="box" pos="4.25 0 0.3" size="0.75 1 0.3" material="gap_material"/>
+  <site name="Gap 6: 1.0m" pos="5.5 0 0.603" size="0.0005" group="2"/>
+  <geom name="gap_platform_7" type="box" pos="6.75 0 0.3" size="0.75 1 0.3" material="gap_material"/>
+  <!-- Entry and exit stairs: 10 cm rises, 30 cm treads, 1.5 m width. -->
+  <geom name="gap_entry_step_1" type="box" pos="-8.85 0 0.05" size="0.15 0.75 0.05" material="stairs_material"/>
+  <geom name="gap_entry_step_2" type="box" pos="-8.55 0 0.1" size="0.15 0.75 0.1" material="stairs_material"/>
+  <geom name="gap_entry_step_3" type="box" pos="-8.25 0 0.15" size="0.15 0.75 0.15" material="stairs_material"/>
+  <geom name="gap_entry_step_4" type="box" pos="-7.95 0 0.2" size="0.15 0.75 0.2" material="stairs_material"/>
+  <geom name="gap_entry_step_5" type="box" pos="-7.65 0 0.25" size="0.15 0.75 0.25" material="stairs_material"/>
+  <geom name="gap_exit_step_1" type="box" pos="8.85 0 0.05" size="0.15 0.75 0.05" material="stairs_material"/>
+  <geom name="gap_exit_step_2" type="box" pos="8.55 0 0.1" size="0.15 0.75 0.1" material="stairs_material"/>
+  <geom name="gap_exit_step_3" type="box" pos="8.25 0 0.15" size="0.15 0.75 0.15" material="stairs_material"/>
+  <geom name="gap_exit_step_4" type="box" pos="7.95 0 0.2" size="0.15 0.75 0.2" material="stairs_material"/>
+  <geom name="gap_exit_step_5" type="box" pos="7.65 0 0.25" size="0.15 0.75 0.25" material="stairs_material"/>
+</mujocoinclude>

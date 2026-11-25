@@ -37,6 +37,30 @@ string(REPLACE "${SCENE_UPDATE}" "${SCENE_UPDATE}
       std::copy_n(user_scn_geoms_.data(), count, scn.geoms + scn.ngeom);
       scn.ngeom += count;
     }" SIMULATE_CODE "${SIMULATE_CODE}")
+# Physics writes pending overlay text under Simulate::mtx. Consume it under
+# the same lock and leave drawing and buffer swaps outside the lock.
+set(OVERLAY_HANDOFF [=[  if (this->newtextrequest.load() == 1) {
+    this->user_texts_.clear();
+    std::swap(this->user_texts_, this->user_texts_new_);
+    int value = 1;
+    this->newtextrequest.compare_exchange_strong(value, 0);
+  }
+]=])
+set(RENDER_UNLOCK [=[    }  // MutexLock (unblocks simulation thread)
+
+    // render while simulation is running]=])
+string(FIND "${SIMULATE_CODE}" "${OVERLAY_HANDOFF}" OVERLAY_HANDOFF_POSITION)
+string(FIND "${SIMULATE_CODE}" "${RENDER_UNLOCK}" RENDER_UNLOCK_POSITION)
+if(OVERLAY_HANDOFF_POSITION EQUAL -1 OR RENDER_UNLOCK_POSITION EQUAL -1)
+  message(FATAL_ERROR "Unsupported MuJoCo simulate.cc: overlay rendering handoff not found")
+endif()
+string(REPLACE "${OVERLAY_HANDOFF}" "" SIMULATE_CODE "${SIMULATE_CODE}")
+string(REPLACE "${RENDER_UNLOCK}" "
+      if (this->newtextrequest.exchange(0) == 1) {
+        this->user_texts_.clear();
+        std::swap(this->user_texts_, this->user_texts_new_);
+      }
+${RENDER_UNLOCK}" SIMULATE_CODE "${SIMULATE_CODE}")
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/simulate_with_user_geoms.cc" "${SIMULATE_CODE}")
 
 file(GLOB SIM_SRC
